@@ -59,18 +59,12 @@ def main():
             raise ValueError("摘要任務未能生成有效的論點列表。")
 
         points_json_string = summarize_task.output.raw
-        # 增加一層健壯性檢查
+        # 解析論點列表（現在應該是穩定的JSON陣列格式）
         try:
-            loaded_points = json.loads(points_json_string)
-            # 檢查加載後的數據是否是字典且包含 'outline' 鍵
-            if isinstance(loaded_points, dict) and 'outline' in loaded_points:
-                all_supporting_points = loaded_points['outline']
-                print("ℹ️ 檢測到包裹物件，已成功提取 'outline' 列表。")
-            # 檢查是否已經是列表
-            elif isinstance(loaded_points, list):
-                all_supporting_points = loaded_points
-            else:
-                raise TypeError("已解析的論點數據既不是列表，也不是包含'outline'鍵的字典。")
+            all_supporting_points = json.loads(points_json_string)
+            if not isinstance(all_supporting_points, list):
+                raise TypeError("論點數據應該是一個列表。")
+            print(f"✅ 成功解析 {len(all_supporting_points)} 個論點")
         except (json.JSONDecodeError, TypeError) as e:
             print(f"❌ 無法正確解析論點列表: {e}")
             print("   原始輸出:", points_json_string)
