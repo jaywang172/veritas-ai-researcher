@@ -11,9 +11,8 @@ from enum import Enum
 
 try:
     from langchain_openai import ChatOpenAI
-    from langchain_google_genai import ChatGoogleGenerativeAI
 except ImportError:
-    # 測試模式：創建模擬的LLM類
+    # 測試模式：創建模擬的ChatOpenAI類
     class ChatOpenAI:
         def __init__(self, model="gpt-4", temperature=0.1, **kwargs):
             self.model_name = model
@@ -22,22 +21,12 @@ except ImportError:
         
         def __repr__(self):
             return f"ChatOpenAI(model={self.model_name}, temperature={self.temperature})"
-    
-    class ChatGoogleGenerativeAI:
-        def __init__(self, model="gemini-2.5-flash", temperature=0.1, **kwargs):
-            self.model_name = model
-            self.temperature = temperature
-            self.kwargs = kwargs
-        
-        def __repr__(self):
-            return f"ChatGoogleGenerativeAI(model={self.model_name}, temperature={self.temperature})"
 
 # 支援的LLM提供商
 class LLMProvider(Enum):
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     GOOGLE = "google"
-    GEMINI = "gemini"  # Gemini API 專用
     LOCAL = "local"
 
 # 模型效能級別
@@ -176,34 +165,6 @@ LLM_CONFIGS = {
         description="經典高性價比模型，適合基礎任務"
     ),
     
-    # Gemini 2.5 系列（基於Standard定價）
-    "gemini-2.5-pro": LLMConfig(
-        provider=LLMProvider.GEMINI,
-        model_name="gemini-2.5-pro",
-        temperature=0.1,
-        tier=ModelTier.PREMIUM,
-        cost_per_token=0.00875,  # $3.5 input + $14 output (1:3比例)
-        description="Gemini 2.5 Pro，頂級推理和程式設計能力，O3/GPT-5級別"
-    ),
-    
-    "gemini-2.5-flash": LLMConfig(
-        provider=LLMProvider.GEMINI,
-        model_name="gemini-2.5-flash",
-        temperature=0.1,
-        tier=ModelTier.ADVANCED,
-        cost_per_token=0.000875,  # $0.35 input + $1.4 output (1:3比例)
-        description="Gemini 2.5 Flash，高效多能的大腦級模型，巨大上下文窗口"
-    ),
-    
-    "gemini-2.5-flash-lite": LLMConfig(
-        provider=LLMProvider.GEMINI,
-        model_name="gemini-2.5-flash-lite",
-        temperature=0.1,
-        tier=ModelTier.BASIC,
-        cost_per_token=0.0001875,  # $0.075 input + $0.3 output (1:3比例)
-        description="Gemini 2.5 Flash-Lite，極致性價比，大規模應用的理想選擇"
-    ),
-    
     # 未來擴展的配置
     "claude-3": LLMConfig(
         provider=LLMProvider.ANTHROPIC,
@@ -215,23 +176,23 @@ LLM_CONFIGS = {
     ),
 }
 
-# Agent專用LLM配置映射（混合智能團隊：Gemini + OpenAI）
+# Agent專用LLM配置映射（基於最新模型）
 AGENT_LLM_MAPPING = {
-    "literature_scout": "gemini-2.5-flash-lite",    # 文獻搜集：基礎任務，極致性價比
-    "synthesizer": "gpt-4.1-mini",                  # 研究分析：維持OpenAI穩定性，結構化提取
-    "outline_planner": "o3-mini",                   # 大綱規劃：維持O系列邏輯規劃優勢  
-    "academic_writer": "gpt-5-mini",                # 學術寫作：維持GPT-5語言創造力
-    "editor": "gpt-5",                             # 編輯審閱：維持最高品質把關
-    "citation_formatter": "gemini-2.5-flash-lite", # 引文格式化：基礎任務，成本最佳化
-    "computational_scientist": "gemini-2.5-pro",   # 計算科學：Gemini頂級程式設計能力
-    "project_manager": "gemini-2.5-flash",         # 專案管理：混合推理大腦，成本效益平衡
+    "literature_scout": "gpt-4o-mini",        # 文獻搜集：基礎任務，重視速度和成本
+    "synthesizer": "gpt-4.1-mini",            # 研究分析：標準任務，需要準確性
+    "outline_planner": "o3-mini",             # 大綱規劃：高級任務，需要邏輯思維
+    "academic_writer": "gpt-5-mini",          # 學術寫作：頂級任務，需要創造力
+    "editor": "gpt-5",                       # 編輯審閱：頂級任務，需要語言精通
+    "citation_formatter": "gpt-4.1-mini",    # 引文格式化：需要準確的URL解析和格式化
+    "computational_scientist": "o3",          # 計算科學：頂級任務，需要邏輯推理和代碼生成
+    "project_manager": "o3",                 # 專案管理：頂級任務，需要策略思維和決策能力
 }
 
 class LLMFactory:
     """LLM工廠類別，負責建立和管理LLM實例"""
     
     @staticmethod
-    def create_llm(config_name: str, **overrides):
+    def create_llm(config_name: str, **overrides) -> ChatOpenAI:
         """
         根據配置名稱建立LLM實例
         
@@ -252,7 +213,7 @@ class LLMFactory:
         temperature = overrides.get("temperature", config.temperature)
         max_tokens = overrides.get("max_tokens", config.max_tokens)
         
-        # 支援多供應商LLM
+        # 目前主要支援OpenAI，未來可擴展其他提供商
         if config.provider == LLMProvider.OPENAI:
             llm_params = {
                 "model": model_name,
@@ -262,23 +223,11 @@ class LLMFactory:
                 llm_params["max_tokens"] = max_tokens
                 
             return ChatOpenAI(**llm_params)
-        
-        elif config.provider == LLMProvider.GEMINI:
-            llm_params = {
-                "model": model_name,
-                "temperature": temperature,
-                "google_api_key": os.getenv("GOOGLE_API_KEY"),
-            }
-            if max_tokens:
-                llm_params["max_output_tokens"] = max_tokens
-                
-            return ChatGoogleGenerativeAI(**llm_params)
-        
         else:
             raise NotImplementedError(f"暫不支援提供商: {config.provider}")
     
     @staticmethod
-    def create_agent_llm(agent_type: str, **overrides):
+    def create_agent_llm(agent_type: str, **overrides) -> ChatOpenAI:
         """
         為特定Agent類型創建優化的LLM實例
         
@@ -335,27 +284,26 @@ class LLMFactory:
         # 自動根據Agent類型判斷覆雜度
         if complexity_level == "auto":
             complexity_map = {
-                "literature_scout": "low",           # 搜索任務相對簡單
-                "synthesizer": "medium",             # 分析需要一定能力
-                "outline_planner": "high",           # 規劃需要高級推理
-                "academic_writer": "high",           # 寫作需要創造力
-                "editor": "high",                    # 編輯需要語言精通
-                "citation_formatter": "low",         # 格式化相對機械
-                "computational_scientist": "high",   # 程式設計和資料分析需要高級推理
-                "project_manager": "high"            # 專案管理需要策略思維
+                "literature_scout": "low",         # 搜索任務相對簡單
+                "synthesizer": "medium",           # 分析需要一定能力
+                "outline_planner": "high",         # 規劃需要高級推理
+                "academic_writer": "high",         # 寫作需要創造力
+                "editor": "high",                  # 編輯需要語言精通
+                "citation_formatter": "low",       # 格式化相對機械
+                "computational_scientist": "high"  # 代碼生成和數據分析需要高級推理
             }
             complexity_level = complexity_map.get(agent_type, "medium")
         
         # 根據覆雜度選擇最經濟的配置
         if complexity_level == "low":
-            return "gemini-2.5-flash-lite"  # 最經濟
+            return "gpt-3.5-turbo"  # 最經濟
         elif complexity_level == "medium":
-            return "gpt-4.1-mini"            # 平衡
+            return "gpt-4.1"        # 平衡
         else:  # high
-            return "gemini-2.5-flash"        # 高效能力
+            return "gpt-4-turbo"    # 最強能力
     
     @staticmethod
-    def create_budget_conscious_llm(agent_type: str, budget_tier: str = "balanced"):
+    def create_budget_conscious_llm(agent_type: str, budget_tier: str = "balanced") -> ChatOpenAI:
         """
         創建預算友好的LLM實例
         
@@ -368,25 +316,23 @@ class LLMFactory:
         """
         budget_configs = {
             "economy": {
-                "literature_scout": "gemini-2.5-flash-lite",  # 極致成本效益
-                "synthesizer": "gemini-2.5-flash-lite",      # 降級到最便宜選項
-                "outline_planner": "gpt-4.1-mini",           # 保持邏輯規劃品質
-                "academic_writer": "gpt-5-nano",             # 最低成本寫作
-                "editor": "gpt-5-nano",                      # 降級編輯成本
-                "citation_formatter": "gemini-2.5-flash-lite", # 最便宜的格式化
-                "computational_scientist": "gemini-2.5-flash", # 平衡程式設計能力與成本
-                "project_manager": "gemini-2.5-flash-lite"   # 經濟級專案管理
+                "literature_scout": "gpt-4.1-nano",
+                "synthesizer": "gpt-4.1-nano", 
+                "outline_planner": "gpt-4.1-mini",
+                "academic_writer": "gpt-5-nano",
+                "editor": "gpt-5-nano",
+                "citation_formatter": "gpt-4o-mini",
+                "computational_scientist": "gpt-4.1-mini"
             },
-            "balanced": AGENT_LLM_MAPPING,  # 使用混合智能預設配置
+            "balanced": AGENT_LLM_MAPPING,  # 使用默認配置
             "premium": {
-                "literature_scout": "gemini-2.5-flash",      # 升級為更強搜尋
-                "synthesizer": "gpt-4.1",                    # 升級分析能力
-                "outline_planner": "o3",                     # 保持頂級邏輯
-                "academic_writer": "gpt-5",                  # 頂級寫作
-                "editor": "gpt-5",                          # 頂級編輯
-                "citation_formatter": "gemini-2.5-flash",   # 升級格式化
-                "computational_scientist": "gemini-2.5-pro", # 頂級程式設計
-                "project_manager": "gemini-2.5-pro"         # 頂級專案管理
+                "literature_scout": "gpt-4o",
+                "synthesizer": "gpt-5-mini",
+                "outline_planner": "o3",
+                "academic_writer": "gpt-5",
+                "editor": "gpt-5",
+                "citation_formatter": "gpt-4o",
+                "computational_scientist": "o3"
             }
         }
         
@@ -484,34 +430,14 @@ if __name__ == "__main__":
     # 測試創建不同類型的LLM
     print("\n🧪 LLM創建測試:")
     for agent_type in ["literature_scout", "academic_writer"]:
+        llm = LLMFactory.create_agent_llm(agent_type)
         config_name = AGENT_LLM_MAPPING[agent_type]
-        config = LLM_CONFIGS[config_name]
-        try:
-            llm = LLMFactory.create_agent_llm(agent_type)
-            if config.provider == LLMProvider.GEMINI:
-                print(f"  {agent_type}: {config_name} (Gemini - 成功創建)")
-            else:
-                print(f"  {agent_type}: {config_name} (配置: {llm.model_name})")
-        except Exception as e:
-            if config.provider == LLMProvider.GEMINI:
-                print(f"  {agent_type}: {config_name} (Gemini - ⚠️ 需要設置GOOGLE_API_KEY)")
-            else:
-                print(f"  {agent_type}: ❌ 錯誤 - {e}")
+        print(f"  {agent_type}: {llm.model_name} (配置: {config_name})")
     
     # 測試預算友好配置
     print("\n💰 預算友好配置測試:")
     for tier in ["economy", "balanced", "premium"]:
-        try:
-            llm = LLMFactory.create_budget_conscious_llm("academic_writer", tier)
-            print(f"  {tier} writer: {llm.model_name}")
-        except Exception:
-            # 對於Gemini模型，顯示配置資訊而不是錯誤
-            budget_configs = {
-                "economy": {"academic_writer": "gpt-5-nano"},
-                "balanced": {"academic_writer": "gpt-5-mini"},
-                "premium": {"academic_writer": "gpt-5"}
-            }
-            config_name = budget_configs[tier]["academic_writer"]
-            print(f"  {tier} writer: {config_name}")
+        llm = LLMFactory.create_budget_conscious_llm("academic_writer", tier)
+        print(f"  {tier} writer: {llm.model_name}")
     
     print("\n✅ 配置系統測試完成！")
