@@ -1,5 +1,5 @@
 from crewai import Task
-from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor, citation_formatter
+from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor, citation_formatter, computational_scientist
 
 def create_research_task(research_topic: str) -> Task:
     return Task(
@@ -184,4 +184,51 @@ Website Name. (n.d.). Web page title. https://example.com/page
 
 如果某些元數據無法確定，使用合理的學術慣例進行標註。''',
         agent=citation_formatter
+    )
+
+def create_data_analysis_task(data_file_path: str, analysis_goal: str) -> Task:
+    return Task(
+        description=f'''你需要执行一个完整的数据分析任务：
+
+**数据文件路径**: {data_file_path}
+**分析目标**: {analysis_goal}
+
+**执行步骤**：
+1. **数据读取**: 使用FileReadTool读取指定路径的数据文件
+2. **数据探索**: 使用CodeInterpreterTool编写Python代码，分析数据结构、基本统计信息
+3. **目标分析**: 根据用户的分析目标，编写相应的分析代码
+4. **数据可视化**: 创建有意义的图表来展示分析结果
+5. **结果总结**: 将分析发现以清晰的文字形式总结
+
+**代码要求**：
+- 使用pandas进行数据处理
+- 使用matplotlib/seaborn进行可视化
+- 必要时使用scikit-learn进行机器学习分析
+- 确保代码安全且可复现
+- 将生成的图表保存为PNG文件
+
+**输出格式**: 生成图表文件并提供分析摘要''',
+        expected_output='''一份完整的数据分析结果，包含：
+
+**数据概览**：
+- 数据维度：X行 Y列
+- 主要字段：[字段1, 字段2, ...]
+- 数据质量：缺失值情况等
+
+**分析发现**：
+- 基于分析目标的关键发现
+- 数据中发现的模式、趋势或异常
+- 统计分析结果
+
+**可视化结果**：
+- 已生成图表文件：analysis_chart.png
+- 图表说明和解读
+
+**结论与建议**：
+- 基于分析结果的结论
+- 后续分析建议
+
+示例格式：
+"通过对数据的分析，我们发现了以下关键模式：[具体发现]。详细的可视化结果已保存为 analysis_chart.png。建议进一步关注 [具体建议]。"''',
+        agent=computational_scientist
     )

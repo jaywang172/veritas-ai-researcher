@@ -5,7 +5,7 @@ Contains definitions for all agents in the Veritas system.
 """
 
 from crewai import Agent
-from tools import search_tools
+from tools import search_tools, computational_tools
 from config import LLMFactory, print_llm_configuration
 
 # --- 將 Agent 的創建邏輯封裝在類中，支持可配置的LLM ---
@@ -130,6 +130,29 @@ class VeritasAgents:
             allow_delegation=False,
         )
 
+    def computational_scientist_agent(self) -> Agent:
+        # 为计算科学创建顶级的LLM实例
+        llm = LLMFactory.create_agent_llm("computational_scientist")
+        return Agent(
+            role='計算科學家 (Computational Scientist)',
+            goal=(
+                '根據用戶請求，編寫並執行Python程式碼，進行數據分析和可視化，'
+                '並以清晰的文本形式報告關鍵發現和洞察。'
+            ),
+            backstory=(
+                '你是一位經驗豐富的計算科學家和數據分析專家，精通Python數據科學生態系統。'
+                '你擅長使用pandas進行數據處理，matplotlib和seaborn進行可視化，'
+                'scikit-learn進行機器學習分析。你的代碼風格清晰、安全且具有高度可復現性。'
+                '你能夠快速理解數據結構，識別數據中的模式和異常，'
+                '並將複雜的統計結果轉化為易於理解的視覺圖表和文字說明。'
+                '你特別注重數據安全和隱私保護，始終遵循最佳實踐。'
+            ),
+            tools=computational_tools,  # 賦予文件讀取和代碼執行能力
+            llm=llm,
+            verbose=True,
+            allow_delegation=False,
+        )
+
 
 agents_creator = VeritasAgents()
 literature_scout = agents_creator.literature_scout_agent()
@@ -138,3 +161,4 @@ outline_planner = agents_creator.outline_planner_agent()
 academic_writer = agents_creator.academic_writer_agent()
 editor = agents_creator.editor_agent()
 citation_formatter = agents_creator.citation_formatter_agent()
+computational_scientist = agents_creator.computational_scientist_agent()

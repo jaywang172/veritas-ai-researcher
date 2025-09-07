@@ -4,16 +4,16 @@ import json
 import time
 from dotenv import load_dotenv
 from crewai import Crew, Process, Task
-from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor, citation_formatter
-from tasks import create_research_task, create_summarize_task, create_outline_task, create_writing_task, create_review_task, create_citation_task
+from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor, citation_formatter, computational_scientist
+from tasks import create_research_task, create_summarize_task, create_outline_task, create_writing_task, create_review_task, create_citation_task, create_data_analysis_task
 
 load_dotenv()
 
 
 def print_header():
     print("=" * 60)
-    print("🔬 Veritas - 透明化AI研究協調平台 (v2.0)".center(60))
-    print("🧠 多元智能：編輯審閱 + 人機協作 + 引文格式化".center(60))
+    print("🔬 Veritas - 混合智能研究平台 (v2.0)".center(60))
+    print("🧠 文本+数据：文献综述 + 数据分析 + 智能报告".center(60))
     print("=" * 60 + "\n")
 
 
@@ -200,14 +200,8 @@ def edit_outline_interactively(outline_data, all_supporting_points):
     return outline_data
 
 
-def main():
-    print_header()
-
-    topic = input("请输入您想研究的主題...\n> ")
-    if not topic:
-        print("錯誤：研究主題不能為空。")
-        return
-
+def run_literature_review_workflow(topic):
+    """执行传统的文献综述工作流"""
     print(f"\n📚 正在研究主題：{topic}")
 
     try:
@@ -406,6 +400,145 @@ def main():
 
     except Exception as e:
         print(f"\n❌ 程式發生嚴重錯誤: {e}")
+
+
+def run_data_analysis_workflow():
+    """执行新的数据分析工作流"""
+    print("\n🔬 正在准备数据分析工作流...")
+    
+    # 获取用户输入
+    data_file_path = input("请输入数据文件路径 (支持 .csv, .xlsx, .json): ")
+    if not data_file_path:
+        print("❌ 错误：数据文件路径不能为空。")
+        return
+        
+    analysis_goal = input("请描述您的分析目标 (例如：探索数据分布，寻找相关性等): ")
+    if not analysis_goal:
+        print("❌ 错误：分析目标不能为空。")
+        return
+    
+    print(f"\n📊 数据文件：{data_file_path}")
+    print(f"🎯 分析目标：{analysis_goal}")
+    
+    try:
+        # --- 阶段一：数据分析 ---
+        print("\n=== 阶段一：数据分析执行 ===")
+        print("🧪 启动计算科学家进行数据分析...")
+        
+        # 创建数据分析任务
+        analysis_task = create_data_analysis_task(data_file_path, analysis_goal)
+        
+        # 创建专门的数据分析Crew
+        analysis_crew = Crew(
+            agents=[computational_scientist],
+            tasks=[analysis_task],
+            verbose=True
+        )
+        
+        # 执行数据分析
+        analysis_result = analysis_crew.kickoff()
+        
+        if not analysis_result or not analysis_result.raw:
+            print("⚠️ 数据分析失败，无法生成报告。")
+            return
+        
+        analysis_summary = analysis_result.raw
+        print("✅ 数据分析完成！")
+        
+        # --- 阶段二：报告生成 ---
+        print("\n=== 阶段二：分析报告撰写 ===")
+        print("📝 正在将分析结果转化为学术报告...")
+        
+        # 将分析结果包装成"论点"格式
+        analysis_point = {
+            "sentence": analysis_summary,
+            "source": f"本地数据分析: {data_file_path}"
+        }
+        
+        # 创建简化的报告大纲
+        simple_outline = {
+            "title": f"数据分析报告：{analysis_goal}",
+            "chapters": [
+                {"chapter_title": "1. 引言", "supporting_points_indices": [0]},
+                {"chapter_title": "2. 数据分析结果", "supporting_points_indices": [0]},
+                {"chapter_title": "3. 结论与建议", "supporting_points_indices": [0]}
+            ]
+        }
+        
+        # 使用现有的写作流程生成报告
+        all_points = [analysis_point]
+        full_report_content = f"# {simple_outline['title']}\n\n"
+        
+        for chapter in simple_outline["chapters"]:
+            chapter_title = chapter["chapter_title"]
+            print(f"\n✍️ 正在撰写章节：{chapter_title}...")
+            
+            # 为每个章节创建写作任务
+            writing_task = create_writing_task(chapter_title, json.dumps(all_points, ensure_ascii=False, indent=2))
+            
+            writing_crew = Crew(
+                agents=[academic_writer],
+                tasks=[writing_task],
+                verbose=False
+            )
+            
+            chapter_result = writing_crew.kickoff()
+            if chapter_result and chapter_result.raw:
+                chapter_content = chapter_result.raw
+            else:
+                chapter_content = "[章节内容生成失败]"
+            
+            full_report_content += f"## {chapter_title}\n\n{chapter_content}\n\n"
+            print(f"✅ 章节「{chapter_title}」撰写完毕！")
+        
+        # --- 阶段三：最终输出 ---
+        print("\n=== 阶段三：报告保存 ===")
+        
+        # 生成文件名
+        safe_goal = "".join(c for c in analysis_goal if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        filename = f"data_analysis_report_{safe_goal[:20]}.txt"
+        
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(full_report_content)
+        
+        print("\n\n" + "=" * 60)
+        print("🎉 数据分析报告生成成功！".center(60))
+        print("=" * 60 + "\n")
+        print(f"📄 报告已保存为：{filename}")
+        print("📊 包含数据分析结果和可视化图表！")
+        
+    except Exception as e:
+        print(f"\n❌ 数据分析发生错误: {e}")
+
+
+def main():
+    """主函数 - 动态工作流选择器"""
+    print_header()
+    
+    print("🤖 欢迎使用 Veritas v2.0 多元智能研究平台！")
+    print("请选择您要使用的工作流：")
+    print("  [1] 📚 文献综述模式 - 基于网络搜索的学术论文生成")
+    print("  [2] 📊 数据分析模式 - 基于本地数据的分析报告生成")
+    print("  [Q] 退出程序")
+    
+    while True:
+        choice = input("\n请输入您的选择 [1/2/Q]: ").upper().strip()
+        
+        if choice == '1':
+            topic = input("\n请输入您想研究的主題: ")
+            if not topic:
+                print("❌ 错误：研究主题不能为空。")
+                continue
+            run_literature_review_workflow(topic)
+            break
+        elif choice == '2':
+            run_data_analysis_workflow()
+            break
+        elif choice == 'Q':
+            print("\n👋 感谢使用 Veritas，再见！")
+            return
+        else:
+            print("❌ 无效选择，请输入 1、2 或 Q")
 
 
 if __name__ == "__main__":

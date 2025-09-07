@@ -117,6 +117,7 @@ AGENT_LLM_MAPPING = {
     "academic_writer": "gpt-4-turbo",         # 学术写作：顶级任务，需要创造力
     "editor": "gpt-4-turbo",                  # 编辑审阅：顶级任务，需要语言精通
     "citation_formatter": "gpt-3.5-turbo",   # 引文格式化：基础任务，重视准确性
+    "computational_scientist": "gpt-4-turbo", # 计算科学：顶级任务，需要逻辑推理和代码生成
 }
 
 class LLMFactory:
@@ -215,12 +216,13 @@ class LLMFactory:
         # 自动根据Agent类型判断复杂度
         if complexity_level == "auto":
             complexity_map = {
-                "literature_scout": "low",      # 搜索任务相对简单
-                "synthesizer": "medium",        # 分析需要一定能力
-                "outline_planner": "high",      # 规划需要高级推理
-                "academic_writer": "high",      # 写作需要创造力
-                "editor": "high",               # 编辑需要语言精通
-                "citation_formatter": "low"     # 格式化相对机械
+                "literature_scout": "low",         # 搜索任务相对简单
+                "synthesizer": "medium",           # 分析需要一定能力
+                "outline_planner": "high",         # 规划需要高级推理
+                "academic_writer": "high",         # 写作需要创造力
+                "editor": "high",                  # 编辑需要语言精通
+                "citation_formatter": "low",       # 格式化相对机械
+                "computational_scientist": "high"  # 代码生成和数据分析需要高级推理
             }
             complexity_level = complexity_map.get(agent_type, "medium")
         
@@ -251,7 +253,8 @@ class LLMFactory:
                 "outline_planner": "gpt-4.1",
                 "academic_writer": "gpt-4",
                 "editor": "gpt-4",
-                "citation_formatter": "gpt-3.5-turbo"
+                "citation_formatter": "gpt-3.5-turbo",
+                "computational_scientist": "gpt-4.1"
             },
             "balanced": AGENT_LLM_MAPPING,  # 使用默认配置
             "premium": {
@@ -260,7 +263,8 @@ class LLMFactory:
                 "outline_planner": "gpt-4-turbo",
                 "academic_writer": "gpt-4-turbo",
                 "editor": "gpt-4-turbo",
-                "citation_formatter": "gpt-4.1"
+                "citation_formatter": "gpt-4.1",
+                "computational_scientist": "gpt-4-turbo"
             }
         }
         
