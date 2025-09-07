@@ -7,9 +7,9 @@ A multi-agent system for automated literature research and synthesis.
 import os
 import sys
 from dotenv import load_dotenv
-from crewai import Crew
-from agents import literature_scout
-from tasks import create_research_task
+from crewai import Crew, Process
+from agents import LiteratureScoutAgent, SynthesizerAgent
+from tasks import create_research_task, create_summarize_task
 
 # Load environment variables
 load_dotenv()
@@ -31,28 +31,44 @@ def main():
     print("🔍 代理人團隊開始工作...")
 
     try:
-        # Sprint 1: Single agent with search tool
-        print("\n=== Sprint 1: 文獻搜集階段 ===")
+        # Sprint 2: Two agents collaboration with data passing
+        print("\n=== Sprint 2: 雙代理人協作階段 ===")
 
-        # Create the research task
-        research_task = create_research_task(research_topic)
+        # Initialize agents
+        scout_agent_creator = LiteratureScoutAgent()
+        synthesizer_agent_creator = SynthesizerAgent()
 
-        # Create a Crew with just the LiteratureScoutAgent
-        crew = Crew(
-            agents=[literature_scout],
-            tasks=[research_task],
-            verbose=True
+        # Create agent instances
+        researcher = scout_agent_creator.create()
+        summarizer = synthesizer_agent_creator.create()
+
+        # Create task instances
+        research_task_instance = create_research_task(research_topic)
+
+        # Create summarize task with research task as context
+        summarize_task_instance = create_summarize_task()
+
+        # Set up context relationship - research task output feeds into summarize task
+        summarize_task_instance.context = [research_task_instance]
+
+        # Create Crew with both agents and tasks
+        veritas_crew = Crew(
+            agents=[researcher, summarizer],
+            tasks=[research_task_instance, summarize_task_instance],
+            verbose=2,
+            process=Process.sequential
         )
 
         # Execute the crew
-        print("執行Crew...")
-        result = crew.kickoff()
+        print("🚀 啟動 Veritas 代理人團隊...")
+        result = veritas_crew.kickoff()
 
         # Display results
-        print("\n=== 搜集結果 ===")
+        print("\n\n✅ 任務完成！以下是生成的綜述報告：")
+        print("----------------------------------------")
         print(result)
 
-        print("\n✅ Sprint 1 完成！文獻搜集代理人成功運行")
+        print("\n✅ Sprint 2 完成！雙代理人協作成功")
 
     except Exception as e:
         print(f"❌ 執行過程中發生錯誤: {str(e)}")
