@@ -59,18 +59,29 @@ source venv/bin/activate # macOS/Linux
 pip install -r requirements.txt
 ```
 
-3) 設定環境變數
+3) 設定 API Keys
 
-複製 `.env.example` 為 `.env` 並填入金鑰。
+```bash
+# 方法一：使用設置腳本（推薦）
+python setup_api_keys.py
 
-4) 執行
+# 方法二：手動設置
+copy env_template.txt .env
+# 編輯 .env 檔案，設置真實的 API Key：
+# OPENAI_API_KEY=sk-your-real-api-key-here
+```
+
+4) 執行混合智能研究
 
 ```
-cd veritas_prototype
 python main.py
 ```
 
-依提示輸入主題，例如：`AI 對電腦科學教育的影響`。完成後會在當前資料夾產生 `主題_draft.txt`，例如現有樣例 `AI對於電腦科學的衝擊_draft.txt`。
+系統會提示輸入開放式研究目標，例如：
+- `分析這份銷售數據並結合市場趨勢研究`
+- `AI 對電腦科學教育的影響（僅文獻分析）`
+
+完成後會在當前資料夾產生完整的學術報告。
 
 ## 專案結構與模組
 
