@@ -31,12 +31,17 @@ def create_summarize_task():
     """Create a summarization task for the Synthesizer Agent."""
     return Task(
         description=(
-            '分析以下由文獻搜集代理人提供的研究資料，並撰寫一份全面的學術綜述。'
-            '確保你的綜述能夠涵蓋資料中的主要發現、趨勢和爭議點。'
-            '你的最終報告應該是一段結構完整、邏輯清晰的文字。'
-            '這是你需要分析的資料：\n\n{context}'
+            '分析以下由文獻搜集代理人提供的原始研究資料。'
+            '你的任務是從這些資料中提取核心論點，並為每一個論點找到其直接的來源URL。'
+            '最終，將這些資訊整理成一個JSON陣列。'
+            '這是你需要分析的原始資料：\n\n{context}'
         ),
-        expected_output='一份大約3-5段的學術綜述報告，以Markdown格式呈現。',
+        expected_output=(
+            '一個格式嚴格的JSON字串。它應該是一個列表（array），'
+            '其中每個元素都是一個包含"sentence"和"source"兩個鍵的對象（object）。'
+            '例如：\'[{"sentence": "遠程工作提高了員工的自主性。", "source": "https://example.com/paper1"}, {"sentence": "混合工作模式有助於團隊協作。", "source": "https://example.com/paper2"}]\' '
+            '確保整個輸出是一個單一的、可以被JSON解析器直接處理的字串。'
+        ),
         agent=synthesizer,
         context=[]  # This will be populated with the research task output
     )

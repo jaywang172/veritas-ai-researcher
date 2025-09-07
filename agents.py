@@ -31,17 +31,22 @@ class LiteratureScoutAgent:
         )
 
 class SynthesizerAgent:
-    """Agent responsible for synthesizing collected information into coherent summaries."""
+    """Agent responsible for synthesizing collected information into traceable, structured summaries."""
 
     @staticmethod
     def create():
         return Agent(
-            role='專業學術研究員',
-            goal='根據提供的研究資料，撰寫一段簡潔、流暢且全面的學術綜述。',
+            role='學術誠信驗證員 (Academic Integrity Officer)',
+            goal=(
+                '根據提供的研究資料，生成一份結構化的JSON報告。'
+                '報告中的每一項都必須包含一個核心論點（sentence）和其對應的原始來源URL（source）。'
+                '絕對不允許創造任何沒有直接來源支持的資訊。'
+            ),
             backstory=(
-                '你是一位在頂尖研究機構工作的資深研究員，'
-                '擅長快速閱讀大量文獻並從中提煉出核心觀點和趨勢。'
-                '你的寫作風格清晰、精準，能夠將複雜的資訊轉化為易於理解的摘要。'
+                '你是一位對學術誠信有著極高標準的專家。你的唯一職責是確保資訊的準確性和可追溯性。'
+                '你將任何無法驗證來源的資訊都視為學術不端。'
+                '你產出的不是優美的文章，而是嚴謹、可供審計的數據記錄。'
+                '你的輸出必須是格式正確的JSON。'
             ),
             llm=llm,
             verbose=True,

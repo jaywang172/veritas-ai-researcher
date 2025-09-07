@@ -6,6 +6,7 @@ A multi-agent system for automated literature research and synthesis.
 
 import os
 import sys
+import json
 from dotenv import load_dotenv
 from crewai import Crew, Process
 from agents import LiteratureScoutAgent, SynthesizerAgent
@@ -31,8 +32,8 @@ def main():
     print("🔍 代理人團隊開始工作...")
 
     try:
-        # Sprint 2: Two agents collaboration with data passing
-        print("\n=== Sprint 2: 雙代理人協作階段 ===")
+        # Sprint 3: Traceability layer - Structured JSON output with source citations
+        print("\n=== Sprint 3: 可追溯性實現階段 ===")
 
         # Initialize agents
         scout_agent_creator = LiteratureScoutAgent()
@@ -61,14 +62,39 @@ def main():
 
         # Execute the crew
         print("🚀 啟動 Veritas 代理人團隊...")
-        result = veritas_crew.kickoff()
+        print("   - Sprint 3: 專注於實現可追溯性...")
+        result_json_string = veritas_crew.kickoff()
 
-        # Display results
-        print("\n\n✅ 任務完成！以下是生成的綜述報告：")
-        print("----------------------------------------")
-        print(result)
+        print("\n\n✅ 結構化報告生成完畢！正在解析與呈現...")
+        print("-------------------------------------------------")
 
-        print("\n✅ Sprint 2 完成！雙代理人協作成功")
+        # --- 新增的解析與呈現邏輯 ---
+        try:
+            # 解析Crew返回的JSON字串
+            report_data = json.loads(result_json_string)
+
+            if not isinstance(report_data, list):
+                print("錯誤：輸出的JSON不是一個列表。")
+                print("原始輸出：", result_json_string)
+                return
+
+            print(f"研究主題：{research_topic}\n")
+            print("綜述報告初稿 (可追溯):\n")
+
+            # 遍歷列表並以指定格式打印
+            for item in report_data:
+                sentence = item.get('sentence', 'N/A')
+                source = item.get('source', 'N/A')
+                print(f"- {sentence} [{source}]")
+
+        except json.JSONDecodeError:
+            print("錯誤：無法解析LLM返回的JSON。這可能是由於格式錯誤。")
+            print("LLM原始輸出：\n", result_json_string)
+        except Exception as e:
+            print(f"處理結果時發生未知錯誤: {e}")
+            print("原始輸出：", result_json_string)
+
+        print("\n✅ Sprint 3 完成！可追溯性實現成功")
 
     except Exception as e:
         print(f"❌ 執行過程中發生錯誤: {str(e)}")
