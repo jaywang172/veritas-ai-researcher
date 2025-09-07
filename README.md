@@ -56,9 +56,12 @@ python main.py
 - [x] 實現 Process.sequential 順序執行
 - [x] 驗證代理人協作與資料流
 
-### Sprint 3: 核心功能實現 - 可追溯性 📋
-- [ ] 實現結構化輸出
-- [ ] JSON格式處理
+### Sprint 3: 核心功能實現 - 可追溯性 ✅
+- [x] 實現結構化JSON輸出格式
+- [x] 改造SynthesizerAgent為學術誠信驗證員
+- [x] 添加JSON解析與錯誤處理
+- [x] 實現每一句話的可追溯性
+- [x] 從敘述性輸出轉為可驗證的數據結構
 
 ### Sprint 4: 整合與最終呈現 📋
 - [ ] CLI介面優化
