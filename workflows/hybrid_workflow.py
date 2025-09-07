@@ -7,8 +7,7 @@ LangGraph-based state machine for autonomous research planning and execution.
 import json
 from typing import Dict, List, Optional, TypedDict, Annotated
 from pathlib import Path
-from langgraph import StateGraph, START, END
-from langgraph.graph import MessagesState
+from langgraph.graph import StateGraph, START, END
 from langchain_core.messages import HumanMessage, AIMessage
 
 # Import our agents and tasks
@@ -583,7 +582,11 @@ def create_hybrid_workflow() -> StateGraph:
             "literature_research": "literature_research",
             "data_analysis": "data_analysis",
             "integration": "integration",
-            "finished": END
+            "writing": "writing",
+            "editing": "editing", 
+            "citation": "citation",
+            "finished": END,
+            "waiting": "project_planning"  # 等待狀態回到規劃
         }
     )
     
@@ -594,7 +597,10 @@ def create_hybrid_workflow() -> StateGraph:
             "data_analysis": "data_analysis",
             "integration": "integration",
             "writing": "writing",
-            "finished": END
+            "editing": "editing",
+            "citation": "citation", 
+            "finished": END,
+            "waiting": "literature_research"
         }
     )
     
@@ -605,7 +611,10 @@ def create_hybrid_workflow() -> StateGraph:
             "literature_research": "literature_research",
             "integration": "integration",
             "writing": "writing",
-            "finished": END
+            "editing": "editing",
+            "citation": "citation",
+            "finished": END,
+            "waiting": "data_analysis"
         }
     )
     
@@ -614,6 +623,8 @@ def create_hybrid_workflow() -> StateGraph:
         decision_router,
         {
             "writing": "writing",
+            "editing": "editing",
+            "citation": "citation",
             "finished": END
         }
     )
@@ -623,6 +634,7 @@ def create_hybrid_workflow() -> StateGraph:
         decision_router,
         {
             "editing": "editing",
+            "citation": "citation",
             "finished": END
         }
     )
