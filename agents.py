@@ -155,6 +155,32 @@ class VeritasAgents:
             allow_delegation=False,
         )
 
+    def project_manager_agent(self) -> Agent:
+        # 為專案管理創建最高級的LLM實例
+        llm = LLMFactory.create_agent_llm("project_manager")
+        return Agent(
+            role='首席研究策略師 (Chief Research Strategist)',
+            goal=(
+                '分析使用者的開放式研究目標，將其分解為具體可執行的子任務，'
+                '智慧決策應將任務分配給哪些專家代理人，並協調整個混合研究流程。'
+                '確保文獻分析與資料分析能有機結合，產生深度洞察。'
+            ),
+            backstory=(
+                '你是一位具有15年跨學科研究經驗的資深策略師，曾主導過上百個複雜研究專案。'
+                '你擅長快速識別研究問題的本質，判斷需要進行質化分析、量化分析，還是混合方法。'
+                '你對每位團隊成員的專長瞭如指掌：文獻搜集專家擅長收集外部資訊，'
+                '計算科學家精通資料分析和視覺化，研究分析師擅長綜合整理，'
+                '大綱規劃師能設計邏輯結構，學術寫作專家能撰寫專業報告，編輯能潤色提升。'
+                '你的決策總是基於效率最大化和品質最佳化的原則，'
+                '能夠動態調整研究策略，確保每個子任務都能為最終目標服務。'
+                '你特別擅長設計並行工作流程，讓不同專家同時工作以提高效率。'
+            ),
+            tools=[],  # 專案經理主要工作是思考、規劃與決策，不需要特定工具
+            llm=llm,
+            verbose=True,
+            allow_delegation=True,  # 專案經理需要委派任務給其他代理人
+        )
+
 
 agents_creator = VeritasAgents()
 literature_scout = agents_creator.literature_scout_agent()
@@ -164,3 +190,4 @@ academic_writer = agents_creator.academic_writer_agent()
 editor = agents_creator.editor_agent()
 citation_formatter = agents_creator.citation_formatter_agent()
 computational_scientist = agents_creator.computational_scientist_agent()
+project_manager = agents_creator.project_manager_agent()

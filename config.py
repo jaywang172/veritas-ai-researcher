@@ -185,6 +185,7 @@ AGENT_LLM_MAPPING = {
     "editor": "gpt-5",                       # 編輯審閱：頂級任務，需要語言精通
     "citation_formatter": "gpt-4.1-mini",    # 引文格式化：需要準確的URL解析和格式化
     "computational_scientist": "o3",          # 計算科學：頂級任務，需要邏輯推理和代碼生成
+    "project_manager": "o3",                  # 專案管理：頂級任務，需要策略思維和決策能力
 }
 
 class LLMFactory:
@@ -321,7 +322,8 @@ class LLMFactory:
                 "academic_writer": "gpt-5-nano",
                 "editor": "gpt-5-nano",
                 "citation_formatter": "gpt-4o-mini",
-                "computational_scientist": "gpt-4.1-mini"
+                "computational_scientist": "gpt-4.1-mini",
+                "project_manager": "gpt-4.1-mini"
             },
             "balanced": AGENT_LLM_MAPPING,  # 使用默認配置
             "premium": {
@@ -331,7 +333,8 @@ class LLMFactory:
                 "academic_writer": "gpt-5",
                 "editor": "gpt-5",
                 "citation_formatter": "gpt-4o",
-                "computational_scientist": "o3"
+                "computational_scientist": "o3",
+                "project_manager": "o3"
             }
         }
         
