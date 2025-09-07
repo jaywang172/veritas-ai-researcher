@@ -1,135 +1,128 @@
-#!/usr/bin/env python3
-"""
-Veritas Prototype - Main Entry Point
-A multi-agent system for automated literature research and synthesis.
-"""
-
 import os
 import sys
 import json
 import time
 from dotenv import load_dotenv
 from crewai import Crew, Process
-from agents import LiteratureScoutAgent, SynthesizerAgent
-from tasks import create_research_task, create_summarize_task
+from agents import literature_scout, synthesizer, outline_planner, academic_writer
+from tasks import create_research_task, create_summarize_task, create_outline_task, create_writing_task
 
-# Load environment variables
 load_dotenv()
 
-# ----------------- 新增：一個簡單的動畫函式 -----------------
-def thinking_animation():
-    """顯示一個簡單的思考動畫"""
-    chars = "|/-\\"
-    for _ in range(20):
-        for char in chars:
-            print(f"\r🤔 代理人團隊正在思考... {char}", end="", flush=True)
-            time.sleep(0.1)
-    print("\r🤔 代理人團隊正在思考... ✓")
 
-
-# ----------------- 新增：美化的標題函式 -----------------
 def print_header():
-    """打印應用程式的標題"""
-    print("="*60)
+    print("=" * 60)
     print("🔬 Veritas - 透明化AI研究協調平台 (原型 v1.0)".center(60))
-    print("="*60)
-    print("\n")
+    print("=" * 60 + "\n")
 
 
 def main():
-    """
-    Main function to run the Veritas prototype.
-    """
-    # --- 修改點 1: 在程式開始時打印標題 ---
     print_header()
 
-    # Get research topic from user
-    topic = input("请输入您想研究的主題 (例如: the impact of remote work on employee productivity): \n> ")
+    topic = input("请输入您想研究的主題...\n> ")
     if not topic:
         print("錯誤：研究主題不能為空。")
         return
 
-    research_topic = topic
-
-    print(f"📚 正在研究主題：{research_topic}")
-    print("🔍 代理人團隊開始工作...")
+    print(f"\n📚 正在研究主題：{topic}")
 
     try:
-        # Sprint 3: Traceability layer - Structured JSON output with source citations
-        print("\n=== Sprint 3: 可追溯性實現階段 ===")
+        # --- 階段一：研究與大綱規劃 ---
+        print("\n=== 階段一：研究與大綱規劃 ===")
 
-        # Initialize agents
-        scout_agent_creator = LiteratureScoutAgent()
-        synthesizer_agent_creator = SynthesizerAgent()
+        research_task = create_research_task(topic)
+        summarize_task = create_summarize_task()
+        outline_task = create_outline_task()
 
-        # Create agent instances
-        researcher = scout_agent_creator.create()
-        summarizer = synthesizer_agent_creator.create()
+        # 建立任務鏈
+        summarize_task.context = [research_task]
+        outline_task.context = [summarize_task]
 
-        # Create task instances
-        research_task_instance = create_research_task(research_topic)
-
-        # Create summarize task with research task as context
-        summarize_task_instance = create_summarize_task()
-
-        # Set up context relationship - research task output feeds into summarize task
-        summarize_task_instance.context = [research_task_instance]
-
-        # Create Crew with both agents and tasks
-        veritas_crew = Crew(
-            agents=[researcher, summarizer],
-            tasks=[research_task_instance, summarize_task_instance],
-            verbose=False, # 將這裡改為 False，我們用自己的動畫來提示進度
-            process=Process.sequential
+        planning_crew = Crew(
+            agents=[literature_scout, synthesizer, outline_planner],
+            tasks=[research_task, summarize_task, outline_task],
+            process=Process.sequential,
+            verbose=True
         )
 
-        # Execute the crew
-        print("\n🚀 啟動 Veritas 代理人團隊...")
+        print("\n🚀 啟動規劃團隊...")
+        crew_result = planning_crew.kickoff()
 
-        # --- 修改點 3: 執行 kickoff 並顯示動畫 ---
-        # 由於 kickoff 是阻塞的，我們無法同時顯示動畫。
-        # 這裡我們只打印一個啟動訊息。在更進階的版本中，會使用多線程。
-        print("   - 正在進行文獻搜尋與分析，請稍候...")
+        if not crew_result or not crew_result.raw:
+            raise ValueError("規劃團隊未能生成有效的大綱。")
 
-        result_json_string = veritas_crew.kickoff()
+        outline_json_string = crew_result.raw
+        print("\n✅ 論文大綱JSON生成完畢！")
+        outline_data = json.loads(outline_json_string)
 
-        # --- 修改點 4: 更新結果呈現部分 ---
-        print("\n\n" + "="*60)
-        print("✅ 任務完成！".center(60))
-        print("="*60 + "\n")
+        if not summarize_task.output or not summarize_task.output.raw:  # 检查 .raw
+            raise ValueError("摘要任務未能生成有效的論點列表。")
 
+        points_json_string = summarize_task.output.raw
+        # 增加一層健壯性檢查
         try:
-            report_data = json.loads(result_json_string)
-
-            if not isinstance(report_data, list):
-                print("❌ 錯誤：輸出的JSON不是一個列表。")
-                print("   原始輸出：", result_json_string)
-                return
-
-            print(f"主題： {research_topic}\n")
-            print("--- 綜述報告 (可追溯) ---\n")
-
-            if not report_data:
-                print("ℹ️ 未能從找到的資料中提取出有效的論點。")
+            loaded_points = json.loads(points_json_string)
+            # 檢查加載後的數據是否是字典且包含 'outline' 鍵
+            if isinstance(loaded_points, dict) and 'outline' in loaded_points:
+                all_supporting_points = loaded_points['outline']
+                print("ℹ️ 檢測到包裹物件，已成功提取 'outline' 列表。")
+            # 檢查是否已經是列表
+            elif isinstance(loaded_points, list):
+                all_supporting_points = loaded_points
             else:
-                for i, item in enumerate(report_data, 1):
-                    sentence = item.get('sentence', 'N/A')
-                    source = item.get('source', 'N/A')
-                    print(f"{i}. {sentence}")
-                    print(f"   └─ 來源: {source}\n")
+                raise TypeError("已解析的論點數據既不是列表，也不是包含'outline'鍵的字典。")
+        except (json.JSONDecodeError, TypeError) as e:
+            print(f"❌ 無法正確解析論點列表: {e}")
+            print("   原始輸出:", points_json_string)
+            return  # 無法繼續，提前退出
 
-            print("\n--- 報告結束 ---\n")
+        # --- 階段二：分章節寫作 ---
+        print("\n=== 階段二：分章節寫作 ===")
 
-        except json.JSONDecodeError:
-            print("❌ 錯誤：無法解析LLM返回的JSON。")
-            print("   LLM原始輸出：\n", result_json_string)
-        except Exception as e:
-            print(f"❌ 處理結果時發生未知錯誤: {e}")
-            print("   原始輸出：", result_json_string)
+        full_paper_content = f"# {outline_data.get('title', '論文草稿')}\n\n"
+
+        for chapter in outline_data.get("chapters", []):
+            chapter_title = chapter.get("chapter_title", "未命名章節")
+            indices = chapter.get("supporting_points_indices", [])
+
+            chapter_points = [all_supporting_points[i] for i in indices if i < len(all_supporting_points)]
+
+            print(f"\n✍️  正在撰寫章節：{chapter_title}...")
+
+            writing_task = create_writing_task(chapter_title, json.dumps(chapter_points, ensure_ascii=False, indent=2))
+
+            writing_crew = Crew(
+                agents=[academic_writer],
+                tasks=[writing_task],
+                verbose=False
+            )
+
+            chapter_content_result = writing_crew.kickoff()
+            if not chapter_content_result or not chapter_content_result.raw:
+                print(f"⚠️ 章節「{chapter_title}」未能生成內容，已跳過。")
+                chapter_content = "[本章節內容生成失敗]"
+            else:
+                chapter_content = chapter_content_result.raw
+
+            full_paper_content += f"## {chapter_title}\n\n{chapter_content}\n\n"
+            print(f"✅ 章節「{chapter_title}」撰寫完畢！")
+
+        # --- 階段三：輸出最終結果 ---
+        print("\n=== 階段三：論文生成與儲存 ===")
+
+        filename = f"{topic.replace(' ', '_')[:30]}_draft.txt"
+
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(full_paper_content)
+
+        print("\n\n" + "=" * 60)
+        print("🎉 論文初稿生成成功！".center(60))
+        print("=" * 60 + "\n")
+        print(f"文件已儲存為：{filename}")
 
     except Exception as e:
         print(f"\n❌ 程式發生嚴重錯誤: {e}")
-        print("   💡 請檢查API金鑰是否正確設置")
+
 
 if __name__ == "__main__":
     main()

@@ -4,19 +4,13 @@ Veritas Tools - Custom Tools for Agents
 Contains tool definitions and configurations for the Veritas system.
 """
 
-from crewai_tools import SerperDevTool, ScrapeWebsiteTool
-from langchain_community.tools.tavily_search import TavilySearchResults
+# 根據錯誤訊息的提示，使用正確的類別名稱
+from crewai_tools import TavilySearchTool
 
-# Initialize search tools
-tavily_search = TavilySearchResults(
-    max_results=10,
-    search_depth="advanced"
-)
+# 使用正確的類別名稱進行初始化
+tavily_search = TavilySearchTool()
 
-# List of available tools
+# 將這個工具放入工具列表
 search_tools = [
-    tavily_search,
-    # You can add more tools here as needed
-    # SerperDevTool(),
-    # ScrapeWebsiteTool()
+    tavily_search
 ]
