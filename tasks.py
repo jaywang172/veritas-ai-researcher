@@ -1,5 +1,5 @@
 from crewai import Task
-from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor
+from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor, citation_formatter
 
 def create_research_task(research_topic: str) -> Task:
     return Task(
@@ -136,4 +136,52 @@ def create_review_task() -> Task:
 
 輸出應該是可以直接發布的高品質學術文本，展現專業期刊的編輯水準。''',
         agent=editor
+    )
+
+def create_citation_task() -> Task:
+    return Task(
+        description='''以下是一篇經過編輯的完整論文：
+
+{context}
+
+**你的引文格式化任務**：
+1. **URL提取**：掃描整篇論文，找出所有以 (http://...) 或 (https://...) 格式標註的來源URL
+2. **元數據檢索**：對每個URL，使用搜索工具查找或推斷以下資訊：
+   - 作者姓名
+   - 文章/網頁標題  
+   - 發布年份
+   - 來源網站/期刊名稱
+   - 存取日期
+3. **APA格式化**：將收集到的元數據轉換為標準APA引文格式
+4. **References生成**：創建完整的參考文獻列表
+
+**APA格式範例**：
+- 網頁文章：Author, A. A. (Year, Month Date). Title of web page. *Website Name*. URL
+- 學術期刊：Author, A. A. (Year). Title of article. *Journal Name*, Volume(Issue), pages. https://doi.org/xxx
+- 報告：Organization. (Year). *Title of report*. URL
+
+**處理原則**：
+- 如果無法找到作者，使用網站名稱
+- 如果無法確定發布年份，使用 (n.d.) 表示無日期
+- 所有URL都應保持完整
+- 按作者姓氏字母順序排列''',
+        expected_output='''一個完整的APA格式參考文獻列表，包含：
+
+## References
+
+Author, A. A. (2024, January 15). Example article title. *Journal Name*. https://example.com/article
+
+Organization Name. (2023). *Report title: Subtitle*. https://example.com/report
+
+Website Name. (n.d.). Web page title. https://example.com/page
+
+**格式要求**：
+- 嚴格遵循APA第7版標準
+- 按字母順序排列
+- 使用懸掛縮排
+- 確保所有URL可點擊且完整
+- 包含論文中引用的所有來源
+
+如果某些元數據無法確定，使用合理的學術慣例進行標註。''',
+        agent=citation_formatter
     )

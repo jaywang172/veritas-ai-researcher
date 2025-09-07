@@ -100,6 +100,26 @@ class VeritasAgents:
             allow_delegation=False,
         )
 
+    def citation_formatter_agent(self) -> Agent:
+        return Agent(
+            role='學術引文格式化專家 (Citation Formatting Specialist)',
+            goal=(
+                '從論文中提取所有引用的URL，智能分析每個來源的元數據（作者、標題、發布時間、來源等），'
+                '並將其轉換為符合APA格式標準的參考文獻條目，最終生成完整的References列表。'
+            ),
+            backstory=(
+                '你是一位精通各種學術引文格式的資訊科學專家，擅長從網路資源中提取準確的元數據。'
+                '你對APA、MLA、Chicago等引文格式瞭如指掌，能夠快速識別不同類型的來源'
+                '（學術期刊、新聞文章、報告、網站等）並應用相應的格式規則。'
+                '你具備卓越的資訊檢索能力，能夠從URL、標題或簡短描述中推斷出完整的引文資訊。'
+                '你的工作確保每篇論文都符合國際學術發表的引文標準。'
+            ),
+            tools=search_tools,  # 賦予搜索能力以查找元數據
+            llm=llm,
+            verbose=True,
+            allow_delegation=False,
+        )
+
 
 agents_creator = VeritasAgents()
 literature_scout = agents_creator.literature_scout_agent()
@@ -107,3 +127,4 @@ synthesizer = agents_creator.synthesizer_agent()
 outline_planner = agents_creator.outline_planner_agent()
 academic_writer = agents_creator.academic_writer_agent()
 editor = agents_creator.editor_agent()
+citation_formatter = agents_creator.citation_formatter_agent()

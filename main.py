@@ -4,8 +4,8 @@ import json
 import time
 from dotenv import load_dotenv
 from crewai import Crew, Process, Task
-from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor
-from tasks import create_research_task, create_summarize_task, create_outline_task, create_writing_task, create_review_task
+from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor, citation_formatter
+from tasks import create_research_task, create_summarize_task, create_outline_task, create_writing_task, create_review_task, create_citation_task
 
 load_dotenv()
 
@@ -13,7 +13,7 @@ load_dotenv()
 def print_header():
     print("=" * 60)
     print("🔬 Veritas - 透明化AI研究協調平台 (v2.0)".center(60))
-    print("✨ 新功能：專業編輯審閱 + 人機協作修正".center(60))
+    print("✨ 完整功能：編輯審閱 + 人機協作 + APA引文格式化".center(60))
     print("=" * 60 + "\n")
 
 
@@ -359,19 +359,50 @@ def main():
             final_paper_content = final_paper_result.raw
             print("✅ 編輯審閱完成！")
 
-        # --- 階段四：最終輸出 ---
-        print("\n=== 階段四：論文完成與儲存 ===")
+        # --- 階段四：引文格式化 ---
+        print("\n=== 階段四：引文格式化 ===")
+        print("📚 正在提取引用來源並生成APA格式參考文獻...")
+
+        # 建立引文內容的虛擬任務作為 context
+        citation_context_task = Task(
+            description="Edited paper content for citation formatting",
+            expected_output="Paper content for reference extraction",
+            agent=citation_formatter
+        )
+        citation_context_task.output = type('MockOutput', (), {'raw': final_paper_content})()
+
+        citation_task = create_citation_task()
+        citation_task.context = [citation_context_task]
+
+        citation_crew = Crew(
+            agents=[citation_formatter],
+            tasks=[citation_task],
+            verbose=True
+        )
+
+        references_result = citation_crew.kickoff()
+        if not references_result or not references_result.raw:
+            print("⚠️ 引文格式化失敗，將不添加參考文獻列表。")
+            complete_paper_content = final_paper_content
+        else:
+            references_content = references_result.raw
+            # 將參考文獻添加到論文末尾
+            complete_paper_content = final_paper_content + "\n\n" + references_content
+            print("✅ 引文格式化完成！已生成APA格式參考文獻列表。")
+
+        # --- 階段五：最終輸出 ---
+        print("\n=== 階段五：論文完成與儲存 ===")
 
         filename = f"{topic.replace(' ', '_')[:30]}_v2.txt"
 
         with open(filename, 'w', encoding='utf-8') as f:
-            f.write(final_paper_content)
+            f.write(complete_paper_content)
 
         print("\n\n" + "=" * 60)
         print("🎉 Veritas v2.0 論文生成成功！".center(60))
         print("=" * 60 + "\n")
         print(f"📄 最終版本已儲存為：{filename}")
-        print("✨ 包含專業編輯審閱和摘要！")
+        print("✨ 包含專業編輯審閱、摘要和APA格式參考文獻！")
 
     except Exception as e:
         print(f"\n❌ 程式發生嚴重錯誤: {e}")
