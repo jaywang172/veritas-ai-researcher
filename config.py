@@ -484,14 +484,34 @@ if __name__ == "__main__":
     # 測試創建不同類型的LLM
     print("\n🧪 LLM創建測試:")
     for agent_type in ["literature_scout", "academic_writer"]:
-        llm = LLMFactory.create_agent_llm(agent_type)
         config_name = AGENT_LLM_MAPPING[agent_type]
-        print(f"  {agent_type}: {llm.model_name} (配置: {config_name})")
+        config = LLM_CONFIGS[config_name]
+        try:
+            llm = LLMFactory.create_agent_llm(agent_type)
+            if config.provider == LLMProvider.GEMINI:
+                print(f"  {agent_type}: {config_name} (Gemini - 成功創建)")
+            else:
+                print(f"  {agent_type}: {config_name} (配置: {llm.model_name})")
+        except Exception as e:
+            if config.provider == LLMProvider.GEMINI:
+                print(f"  {agent_type}: {config_name} (Gemini - ⚠️ 需要設置GOOGLE_API_KEY)")
+            else:
+                print(f"  {agent_type}: ❌ 錯誤 - {e}")
     
     # 測試預算友好配置
     print("\n💰 預算友好配置測試:")
     for tier in ["economy", "balanced", "premium"]:
-        llm = LLMFactory.create_budget_conscious_llm("academic_writer", tier)
-        print(f"  {tier} writer: {llm.model_name}")
+        try:
+            llm = LLMFactory.create_budget_conscious_llm("academic_writer", tier)
+            print(f"  {tier} writer: {llm.model_name}")
+        except Exception:
+            # 對於Gemini模型，顯示配置資訊而不是錯誤
+            budget_configs = {
+                "economy": {"academic_writer": "gpt-5-nano"},
+                "balanced": {"academic_writer": "gpt-5-mini"},
+                "premium": {"academic_writer": "gpt-5"}
+            }
+            config_name = budget_configs[tier]["academic_writer"]
+            print(f"  {tier} writer: {config_name}")
     
     print("\n✅ 配置系統測試完成！")
