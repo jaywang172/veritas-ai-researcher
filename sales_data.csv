@@ -1,9 +1,21 @@
-Date,Product,Sales,Region
-2024-01-15,Laptop,1200,North
-2024-01-20,Mouse,25,North
-2024-02-10,Laptop,1500,South
-2024-02-18,Keyboard,75,South
-2024-03-05,Mouse,30,North
-2024-03-22,Laptop,1100,West
-2024-04-11,Webcam,50,West
-2024-04-25,Keyboard,80,North
+Region,Product,Sales,Quarter,Year
+North,Product A,150000,Q1,2024
+South,Product A,350000,Q1,2024
+East,Product A,200000,Q1,2024
+West,Product A,180000,Q1,2024
+North,Product B,120000,Q1,2024
+South,Product B,420000,Q1,2024
+East,Product B,180000,Q1,2024
+West,Product B,160000,Q1,2024
+North,Product C,100000,Q1,2024
+South,Product C,380000,Q1,2024
+East,Product C,150000,Q1,2024
+West,Product C,140000,Q1,2024
+North,Product A,160000,Q2,2024
+South,Product A,370000,Q2,2024
+East,Product A,210000,Q2,2024
+West,Product A,190000,Q2,2024
+North,Product B,130000,Q2,2024
+South,Product B,440000,Q2,2024
+East,Product B,190000,Q2,2024
+West,Product B,170000,Q2,2024

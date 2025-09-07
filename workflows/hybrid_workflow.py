@@ -536,8 +536,13 @@ def decision_router(state: ResearchState) -> str:
         if literature_done and data_done:
             return "integration"
         else:
-            # 還有前置任務沒完成，等待
-            return "waiting"
+            # 還有前置任務沒完成，繼續當前階段
+            if not literature_done:
+                return "literature_research"
+            elif not data_done:
+                return "data_analysis"
+            else:
+                return "integration"
     
     # 寫作階段
     if 'writing' not in tasks_completed:
@@ -585,8 +590,7 @@ def create_hybrid_workflow() -> StateGraph:
             "writing": "writing",
             "editing": "editing", 
             "citation": "citation",
-            "finished": END,
-            "waiting": "project_planning"  # 等待狀態回到規劃
+            "finished": END
         }
     )
     
@@ -599,8 +603,7 @@ def create_hybrid_workflow() -> StateGraph:
             "writing": "writing",
             "editing": "editing",
             "citation": "citation", 
-            "finished": END,
-            "waiting": "literature_research"
+            "finished": END
         }
     )
     
@@ -613,8 +616,7 @@ def create_hybrid_workflow() -> StateGraph:
             "writing": "writing",
             "editing": "editing",
             "citation": "citation",
-            "finished": END,
-            "waiting": "data_analysis"
+            "finished": END
         }
     )
     
