@@ -200,26 +200,25 @@ Zhang, M., & Liu, K. (2024). Machine learning applications. *Journal of AI Resea
 
 def create_data_analysis_task(data_file_path: str, analysis_goal: str) -> Task:
     return Task(
-        description=f'''你需要執行一個完整的數據分析任務：
+        description=f'''你必須使用工具完成以下數據分析任務：
 
-**數據文件路徑**: {data_file_path}
-**分析目標**: {analysis_goal}
+**第一步：使用 FileReadTool 讀取數據**
+- 調用 FileReadTool，file_path 參數設為 "{data_file_path}"
+- 檢查數據結構和內容
 
-**執行步驟**：
-1. **數據讀取**: 使用FileReadTool讀取指定路徑的數據文件
-2. **數據探索**: 使用CodeInterpreterTool編寫Python代碼，分析數據結構、基本統計信息
-3. **目標分析**: 根據用戶的分析目標，編寫相應的分析代碼
-4. **數據可視化**: 創建有意義的圖表來展示分析結果
-5. **結果總結**: 將分析發現以清晰的文字形式總結
+**第二步：使用 CodeInterpreterTool 分析數據**
+- 調用 CodeInterpreterTool 執行 Python 代碼
+- libraries_used 設為 ["pandas", "matplotlib", "seaborn"]
+- 分析目標：{analysis_goal}
 
-**代碼要求**：
-- 使用pandas進行數據處理
-- 使用matplotlib/seaborn進行可視化
-- 必要時使用scikit-learn進行機器學習分析
-- 確保代碼安全且可覆現
-- 將生成的圖表保存為PNG文件
+**具體要求**：
+1. 先讀取文件內容
+2. 使用 pandas 處理數據
+3. 執行統計分析和可視化
+4. 生成圖表並保存為 PNG 文件
+5. 提供詳細的分析摘要
 
-**輸出格式**: 生成圖表文件並提供分析摘要''',
+**重要**：你必須實際使用 FileReadTool 和 CodeInterpreterTool，不要說找不到文件！''',
         expected_output='''一份完整的數據分析結果，包含：
 
 **數據概覽**：

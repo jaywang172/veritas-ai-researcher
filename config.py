@@ -184,7 +184,7 @@ AGENT_LLM_MAPPING = {
     "academic_writer": "gpt-5-mini",          # 學術寫作：頂級任務，需要創造力
     "editor": "gpt-5",                       # 編輯審閱：頂級任務，需要語言精通
     "citation_formatter": "gpt-4.1-mini",    # 引文格式化：需要準確的URL解析和格式化
-    "computational_scientist": "o3",          # 計算科學：頂級任務，需要邏輯推理和代碼生成
+    "computational_scientist": "gpt-4o",          # 計算科學：可靠的工具使用能力
     "project_manager": "o3",                 # 專案管理：頂級任務，需要策略思維和決策能力
 }
 
