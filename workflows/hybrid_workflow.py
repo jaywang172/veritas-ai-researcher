@@ -261,10 +261,24 @@ def data_analysis_node(state: ResearchState) -> ResearchState:
             state['tasks_completed'].append('data_analysis')
         else:
             state['errors'].append("數據分析執行失敗")
+            # 即使失敗也標記為已完成，避免無限循環
+            state['tasks_completed'].append('data_analysis')
+            # 提供備用分析結果
+            state['data_analysis_points'] = [{
+                "sentence": "數據分析執行失敗，無法生成有效的分析結果。建議檢查數據文件和分析工具配置。",
+                "source": "本地數據分析"
+            }]
     
     except Exception as e:
         print(f"❌ 數據分析過程發生錯誤：{e}")
         state['errors'].append(f"數據分析錯誤：{str(e)}")
+        # 即使失敗也標記為已完成，避免無限循環
+        state['tasks_completed'].append('data_analysis')
+        # 提供備用分析結果
+        state['data_analysis_points'] = [{
+            "sentence": f"數據分析過程遇到技術問題：{str(e)}。建議手動檢查數據文件格式和內容。",
+            "source": "本地數據分析"
+        }]
     
     return state
 
@@ -388,6 +402,9 @@ def writing_node(state: ResearchState) -> ResearchState:
     except Exception as e:
         print(f"❌ 寫作過程發生錯誤：{e}")
         state['errors'].append(f"寫作錯誤：{str(e)}")
+        # 即使失敗也標記為已完成，避免無限循環
+        state['tasks_completed'].append('writing')
+        state['draft_content'] = f"# 研究報告\n\n由於技術問題，寫作過程未能完成。錯誤：{str(e)}\n\n請檢查配置並重試。"
     
     return state
 
@@ -439,6 +456,8 @@ def editing_node(state: ResearchState) -> ResearchState:
         print(f"❌ 編輯過程發生錯誤：{e}")
         state['errors'].append(f"編輯錯誤：{str(e)}")
         state['final_paper_content'] = state['draft_content']
+        # 即使失敗也標記為已完成，避免無限循環
+        state['tasks_completed'].append('editing')
     
     return state
 
@@ -498,6 +517,8 @@ def citation_node(state: ResearchState) -> ResearchState:
         print(f"❌ 引文格式化過程發生錯誤：{e}")
         state['errors'].append(f"引文格式化錯誤：{str(e)}")
         state['complete_paper_content'] = state['final_paper_content']
+        # 即使失敗也標記為已完成，避免無限循環
+        state['tasks_completed'].append('citation')
     
     return state
 

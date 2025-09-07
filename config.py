@@ -213,18 +213,17 @@ class LLMFactory:
         temperature = overrides.get("temperature", config.temperature)
         max_tokens = overrides.get("max_tokens", config.max_tokens)
         
-        # 某些模型不支援自定義溫度，使用默認值
+        # 某些模型不支援自定義溫度，使用默認值 1.0
         if any(prefix in model_name for prefix in ["o3", "o1", "gpt-5"]):
-            temperature = None
+            temperature = 1.0
         
         # 目前主要支援OpenAI，未來可擴展其他提供商
         if config.provider == LLMProvider.OPENAI:
             llm_params = {
                 "model": model_name,
             }
-            # 只有當溫度不為 None 時才設定
-            if temperature is not None:
-                llm_params["temperature"] = temperature
+            # 設定溫度參數
+            llm_params["temperature"] = temperature
             if max_tokens:
                 llm_params["max_tokens"] = max_tokens
                 
