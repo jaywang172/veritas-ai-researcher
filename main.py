@@ -3,16 +3,17 @@ import sys
 import json
 import time
 from dotenv import load_dotenv
-from crewai import Crew, Process
-from agents import literature_scout, synthesizer, outline_planner, academic_writer
-from tasks import create_research_task, create_summarize_task, create_outline_task, create_writing_task
+from crewai import Crew, Process, Task
+from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor
+from tasks import create_research_task, create_summarize_task, create_outline_task, create_writing_task, create_review_task
 
 load_dotenv()
 
 
 def print_header():
     print("=" * 60)
-    print("🔬 Veritas - 透明化AI研究協調平台 (原型 v1.0)".center(60))
+    print("🔬 Veritas - 透明化AI研究協調平台 (v2.0)".center(60))
+    print("✨ 新功能：專業編輯審閱 + 自動摘要生成".center(60))
     print("=" * 60 + "\n")
 
 
@@ -101,18 +102,48 @@ def main():
             full_paper_content += f"## {chapter_title}\n\n{chapter_content}\n\n"
             print(f"✅ 章節「{chapter_title}」撰寫完畢！")
 
-        # --- 階段三：輸出最終結果 ---
-        print("\n=== 階段三：論文生成與儲存 ===")
+        # --- 階段三：編輯與審閱 ---
+        print("\n=== 階段三：編輯與審閱 ===")
+        print("🎨 正在進行專業編輯審閱...")
 
-        filename = f"{topic.replace(' ', '_')[:30]}_draft.txt"
+        # 建立一個包含初稿內容的虛擬任務作為 context
+        draft_context_task = Task(
+            description="Initial draft content",
+            expected_output="Draft content for review",
+            agent=editor
+        )
+        draft_context_task.output = type('MockOutput', (), {'raw': full_paper_content})()
+
+        review_task = create_review_task()
+        review_task.context = [draft_context_task]  # 將初稿作為上下文
+
+        review_crew = Crew(
+            agents=[editor],
+            tasks=[review_task],
+            verbose=True
+        )
+
+        final_paper_result = review_crew.kickoff()
+        if not final_paper_result or not final_paper_result.raw:
+            print("⚠️ 編輯審閱失敗，將使用原始初稿。")
+            final_paper_content = full_paper_content
+        else:
+            final_paper_content = final_paper_result.raw
+            print("✅ 編輯審閱完成！")
+
+        # --- 階段四：最終輸出 ---
+        print("\n=== 階段四：論文完成與儲存 ===")
+
+        filename = f"{topic.replace(' ', '_')[:30]}_v2.txt"
 
         with open(filename, 'w', encoding='utf-8') as f:
-            f.write(full_paper_content)
+            f.write(final_paper_content)
 
         print("\n\n" + "=" * 60)
-        print("🎉 論文初稿生成成功！".center(60))
+        print("🎉 Veritas v2.0 論文生成成功！".center(60))
         print("=" * 60 + "\n")
-        print(f"文件已儲存為：{filename}")
+        print(f"📄 最終版本已儲存為：{filename}")
+        print("✨ 包含專業編輯審閱和摘要！")
 
     except Exception as e:
         print(f"\n❌ 程式發生嚴重錯誤: {e}")

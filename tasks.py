@@ -1,5 +1,5 @@
 from crewai import Task
-from agents import literature_scout, synthesizer, outline_planner, academic_writer
+from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor
 
 def create_research_task(research_topic: str) -> Task:
     return Task(
@@ -107,4 +107,33 @@ def create_writing_task(chapter_title: str, supporting_points: str) -> Task:
 - 使用沒有提供來源的資訊
 - 包含章節標題''',
         agent=academic_writer
+    )
+
+def create_review_task() -> Task:
+    return Task(
+        description='''這是論文的完整初稿：
+
+{context}
+
+**你的編輯任務**：
+1. **通讀全文**：仔細審閱整篇論文，識別並修正任何不連貫或矛盾之處
+2. **章節過渡**：確保所有章節之間的過渡自然流暢，必要時添加或重寫過渡段落
+3. **風格統一**：統一全文的術語、寫作風格和語調，確保一致性
+4. **邏輯檢查**：驗證論述邏輯的完整性，確保論點之間的關聯性清晰
+5. **摘要生成**：根據全文核心內容，在文章最開頭生成一段 150-250 字的專業摘要
+
+**格式要求**：
+- 在文章最開始添加 "## 摘要 (Abstract)" 部分
+- 保持所有現有的來源標註
+- 保持章節結構，但可以調整內容和過渡
+- 確保摘要簡潔且概括了論文的主要貢獻''',
+        expected_output='''一份經過專業編輯和潤色的完整論文文本，包含：
+
+1. **摘要部分**：在文章開頭的專業摘要 (150-250字)
+2. **流暢內容**：所有章節內容經過潤色，邏輯清晰，過渡自然
+3. **統一風格**：全文術語和寫作風格保持一致
+4. **完整引用**：保留所有原有的來源標註
+
+輸出應該是可以直接發布的高品質學術文本，展現專業期刊的編輯水準。''',
+        agent=editor
     )

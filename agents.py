@@ -82,12 +82,28 @@ class VeritasAgents:
             allow_delegation=False,
         )
 
+    def editor_agent(self) -> Agent:
+        return Agent(
+            role='首席學術編輯 (Chief Academic Editor)',
+            goal=(
+                '審閱整篇論文初稿，檢查邏輯連貫性、寫作風格一致性，重寫過渡段落，確保全文流暢自然。'
+                '最後，根據全文內容生成一份專業的摘要 (Abstract)。'
+            ),
+            backstory=(
+                '你是一位在頂尖學術期刊工作的資深編輯，對學術寫作的清晰度、流暢性和結構完整性有著極高的要求。'
+                '你擅長發現不同章節間的斷裂感，並能用精準的語言將其無縫連接。'
+                '你的編輯技巧能讓一篇合格的文章變得優秀，讓一篇優秀的文章變得卓越。'
+                '你特別擅長撰寫簡潔而全面的摘要，能夠在 150-250 字內精確概括整篇論文的核心價值。'
+            ),
+            llm=llm,
+            verbose=True,
+            allow_delegation=False,
+        )
+
 
 agents_creator = VeritasAgents()
 literature_scout = agents_creator.literature_scout_agent()
 synthesizer = agents_creator.synthesizer_agent()
-
-# --- 在这里添加下面这一行 ---
 outline_planner = agents_creator.outline_planner_agent()
-
 academic_writer = agents_creator.academic_writer_agent()
+editor = agents_creator.editor_agent()
