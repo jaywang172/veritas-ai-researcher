@@ -7,6 +7,7 @@ A multi-agent system for automated literature research and synthesis.
 import os
 import sys
 import json
+import time
 from dotenv import load_dotenv
 from crewai import Crew, Process
 from agents import LiteratureScoutAgent, SynthesizerAgent
@@ -15,18 +16,40 @@ from tasks import create_research_task, create_summarize_task
 # Load environment variables
 load_dotenv()
 
+# ----------------- 新增：一個簡單的動畫函式 -----------------
+def thinking_animation():
+    """顯示一個簡單的思考動畫"""
+    chars = "|/-\\"
+    for _ in range(20):
+        for char in chars:
+            print(f"\r🤔 代理人團隊正在思考... {char}", end="", flush=True)
+            time.sleep(0.1)
+    print("\r🤔 代理人團隊正在思考... ✓")
+
+
+# ----------------- 新增：美化的標題函式 -----------------
+def print_header():
+    """打印應用程式的標題"""
+    print("="*60)
+    print("🔬 Veritas - 透明化AI研究協調平台 (原型 v1.0)".center(60))
+    print("="*60)
+    print("\n")
+
+
 def main():
     """
     Main function to run the Veritas prototype.
     """
-    print("🚀 正在啟動Veritas代理人團隊...")
+    # --- 修改點 1: 在程式開始時打印標題 ---
+    print_header()
 
     # Get research topic from user
-    research_topic = input("請輸入研究主題：")
-
-    if not research_topic.strip():
-        print("❌ 研究主題不能為空")
+    topic = input("请输入您想研究的主題 (例如: the impact of remote work on employee productivity): \n> ")
+    if not topic:
+        print("錯誤：研究主題不能為空。")
         return
+
+    research_topic = topic
 
     print(f"📚 正在研究主題：{research_topic}")
     print("🔍 代理人團隊開始工作...")
@@ -56,49 +79,57 @@ def main():
         veritas_crew = Crew(
             agents=[researcher, summarizer],
             tasks=[research_task_instance, summarize_task_instance],
-            verbose=2,
+            verbose=False, # 將這裡改為 False，我們用自己的動畫來提示進度
             process=Process.sequential
         )
 
         # Execute the crew
-        print("🚀 啟動 Veritas 代理人團隊...")
-        print("   - Sprint 3: 專注於實現可追溯性...")
+        print("\n🚀 啟動 Veritas 代理人團隊...")
+
+        # --- 修改點 3: 執行 kickoff 並顯示動畫 ---
+        # 由於 kickoff 是阻塞的，我們無法同時顯示動畫。
+        # 這裡我們只打印一個啟動訊息。在更進階的版本中，會使用多線程。
+        print("   - 正在進行文獻搜尋與分析，請稍候...")
+
         result_json_string = veritas_crew.kickoff()
 
-        print("\n\n✅ 結構化報告生成完畢！正在解析與呈現...")
-        print("-------------------------------------------------")
+        # --- 修改點 4: 更新結果呈現部分 ---
+        print("\n\n" + "="*60)
+        print("✅ 任務完成！".center(60))
+        print("="*60 + "\n")
 
-        # --- 新增的解析與呈現邏輯 ---
         try:
-            # 解析Crew返回的JSON字串
             report_data = json.loads(result_json_string)
 
             if not isinstance(report_data, list):
-                print("錯誤：輸出的JSON不是一個列表。")
-                print("原始輸出：", result_json_string)
+                print("❌ 錯誤：輸出的JSON不是一個列表。")
+                print("   原始輸出：", result_json_string)
                 return
 
-            print(f"研究主題：{research_topic}\n")
-            print("綜述報告初稿 (可追溯):\n")
+            print(f"主題： {research_topic}\n")
+            print("--- 綜述報告 (可追溯) ---\n")
 
-            # 遍歷列表並以指定格式打印
-            for item in report_data:
-                sentence = item.get('sentence', 'N/A')
-                source = item.get('source', 'N/A')
-                print(f"- {sentence} [{source}]")
+            if not report_data:
+                print("ℹ️ 未能從找到的資料中提取出有效的論點。")
+            else:
+                for i, item in enumerate(report_data, 1):
+                    sentence = item.get('sentence', 'N/A')
+                    source = item.get('source', 'N/A')
+                    print(f"{i}. {sentence}")
+                    print(f"   └─ 來源: {source}\n")
+
+            print("\n--- 報告結束 ---\n")
 
         except json.JSONDecodeError:
-            print("錯誤：無法解析LLM返回的JSON。這可能是由於格式錯誤。")
-            print("LLM原始輸出：\n", result_json_string)
+            print("❌ 錯誤：無法解析LLM返回的JSON。")
+            print("   LLM原始輸出：\n", result_json_string)
         except Exception as e:
-            print(f"處理結果時發生未知錯誤: {e}")
-            print("原始輸出：", result_json_string)
-
-        print("\n✅ Sprint 3 完成！可追溯性實現成功")
+            print(f"❌ 處理結果時發生未知錯誤: {e}")
+            print("   原始輸出：", result_json_string)
 
     except Exception as e:
-        print(f"❌ 執行過程中發生錯誤: {str(e)}")
-        print("請檢查API金鑰是否正確設置")
+        print(f"\n❌ 程式發生嚴重錯誤: {e}")
+        print("   💡 請檢查API金鑰是否正確設置")
 
 if __name__ == "__main__":
     main()
