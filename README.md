@@ -24,14 +24,23 @@ Veritas 是一個以多代理人協作為核心、專注於「可追溯學術綜
 
 ## 環境變數
 
-建立 `.env`（可由 `.env.example` 複製）：
+建立 `.env` 檔案（可由 `env_template.txt` 複製）：
 
+```bash
+# 複製模板並編輯
+cp env_template.txt .env
+# 然後編輯 .env 檔案
+```
+
+必要的環境變數：
 ```
 OPENAI_API_KEY=你的OpenAI金鑰
-TAVILY_API_KEY=你的Tavily金鑰
+TAVILY_API_KEY=你的Tavily金鑰（用於網路搜尋）
 ```
 
-預設模型：`gpt-4.1`（可於 `agents.py` 中調整）。
+**重要**：請確保設定有效的 OpenAI API Key，否則系統無法運行。
+
+模型配置：支援最新的 GPT-5、O3 等模型，可在 `config.py` 中調整。
 
 ## 快速開始
 

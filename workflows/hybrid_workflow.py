@@ -163,6 +163,8 @@ def project_planning_node(state: ResearchState) -> ResearchState:
             "priority_tasks": ["literature_research"],
             "reasoning": "錯誤恢復策略"
         }
+        state['current_stage'] = 'planning_completed'
+        state['tasks_completed'].append('project_planning')
     
     return state
 
@@ -507,12 +509,18 @@ def decision_router(state: ResearchState) -> str:
     current_stage = state.get('current_stage', 'start')
     project_plan = state.get('project_plan', {})
     tasks_completed = state.get('tasks_completed', [])
+    errors = state.get('errors', [])
     
     print(f"\n🧭 決策路由器：當前階段 = {current_stage}")
     
-    # 如果還沒有專案計劃，先規劃
+    # 如果有嚴重錯誤，結束流程
+    if errors and any('AuthenticationError' in error for error in errors):
+        print("❌ 檢測到認證錯誤，結束流程")
+        return "finished"
+    
+    # 如果還沒有專案計劃，開始文獻研究作為備用
     if 'project_planning' not in tasks_completed:
-        return "project_planning"
+        return "literature_research"
     
     # 根據專案計劃決定執行順序
     requires_literature = project_plan.get('requires_literature', True)
