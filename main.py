@@ -13,8 +13,191 @@ load_dotenv()
 def print_header():
     print("=" * 60)
     print("🔬 Veritas - 透明化AI研究協調平台 (v2.0)".center(60))
-    print("✨ 新功能：專業編輯審閱 + 自動摘要生成".center(60))
+    print("✨ 新功能：專業編輯審閱 + 人機協作修正".center(60))
     print("=" * 60 + "\n")
+
+
+def display_outline_for_review(outline_data, all_supporting_points):
+    """美化显示生成的大纲，供用户审阅"""
+    print("\n" + "🎯 AI 生成的论文大纲".center(50, "="))
+    print(f"\n📖 论文标题：{outline_data.get('title', '未定义标题')}")
+    print(f"📊 总论点数：{len(all_supporting_points)} 个")
+    print(f"📑 计划章节：{len(outline_data.get('chapters', []))} 章")
+    
+    print("\n" + "📋 详细章节结构".center(50, "-"))
+    
+    for i, chapter in enumerate(outline_data.get("chapters", []), 1):
+        chapter_title = chapter.get("chapter_title", f"第{i}章")
+        indices = chapter.get("supporting_points_indices", [])
+        
+        print(f"\n{i}. {chapter_title}")
+        print(f"   📌 使用论点: {len(indices)} 个 (索引: {indices})")
+        
+        # 显示该章节将使用的论点预览
+        if indices and len(indices) <= 3:  # 如果论点不多，显示简要内容
+            for idx in indices:
+                if idx < len(all_supporting_points):
+                    point = all_supporting_points[idx]
+                    sentence = point.get('sentence', '未知论点')
+                    # 截断长句子
+                    preview = sentence[:80] + "..." if len(sentence) > 80 else sentence
+                    print(f"      • {preview}")
+        elif indices:
+            # 论点太多时只显示数量
+            print(f"      • {len(indices)} 个论点将被整合到此章节")
+    
+    print("\n" + "=" * 50)
+
+
+def get_user_approval():
+    """获取用户对大纲的审批决定"""
+    print("\n🤔 请审阅以上大纲，您希望如何继续？")
+    print("   [Y] 接受此大纲，继续写作")
+    print("   [N] 重新生成大纲") 
+    print("   [E] 手动编辑大纲 (高级功能)")
+    print("   [Q] 退出程序")
+    
+    while True:
+        choice = input("\n请输入您的选择 [Y/N/E/Q]: ").upper().strip()
+        if choice in ['Y', 'N', 'E', 'Q']:
+            return choice
+        print("❌ 无效选择，请输入 Y、N、E 或 Q")
+
+
+def edit_outline_interactively(outline_data, all_supporting_points):
+    """交互式编辑大纲功能"""
+    print("\n🛠️  进入大纲编辑模式")
+    print("━" * 50)
+    print("可用命令:")
+    print("  • edit title <新标题>        - 修改论文标题")
+    print("  • edit chapter <序号> <新标题> - 修改章节标题")
+    print("  • move <章节序号> to <新位置>  - 移动章节位置")
+    print("  • delete chapter <序号>      - 删除章节")
+    print("  • add point <论点序号> to <章节序号> - 添加论点到章节")
+    print("  • remove point <论点序号> from <章节序号> - 从章节移除论点")
+    print("  • show                       - 显示当前大纲")
+    print("  • done                       - 完成编辑")
+    print("  • help                       - 显示帮助")
+    print("━" * 50)
+    
+    while True:
+        command = input("\n📝 请输入编辑命令: ").strip().lower()
+        
+        if command == "done":
+            print("✅ 编辑完成！")
+            break
+        elif command == "show":
+            display_outline_for_review(outline_data, all_supporting_points)
+        elif command == "help":
+            print("\n📚 编辑命令帮助：")
+            print("例子:")
+            print("  edit title AI对教育的影响分析")
+            print("  edit chapter 2 人工智能的教育应用")
+            print("  move 3 to 2")
+            print("  delete chapter 4")
+            print("  add point 5 to 2")
+            print("  remove point 3 from 1")
+        elif command.startswith("edit title "):
+            new_title = command[11:].strip()
+            if new_title:
+                outline_data["title"] = new_title
+                print(f"✅ 标题已更新为: {new_title}")
+            else:
+                print("❌ 请提供新标题")
+        elif command.startswith("edit chapter "):
+            try:
+                parts = command[13:].strip().split(" ", 1)
+                chapter_num = int(parts[0]) - 1  # 转换为0索引
+                new_title = parts[1] if len(parts) > 1 else ""
+                
+                if 0 <= chapter_num < len(outline_data.get("chapters", [])) and new_title:
+                    outline_data["chapters"][chapter_num]["chapter_title"] = new_title
+                    print(f"✅ 第{chapter_num + 1}章标题已更新为: {new_title}")
+                else:
+                    print("❌ 无效的章节序号或标题")
+            except (ValueError, IndexError):
+                print("❌ 命令格式错误，请使用: edit chapter <序号> <新标题>")
+        elif command.startswith("move "):
+            try:
+                # 解析 "move 3 to 2" 格式
+                import re
+                match = re.match(r"move (\d+) to (\d+)", command)
+                if match:
+                    from_pos = int(match.group(1)) - 1
+                    to_pos = int(match.group(2)) - 1
+                    chapters = outline_data.get("chapters", [])
+                    
+                    if 0 <= from_pos < len(chapters) and 0 <= to_pos < len(chapters):
+                        # 移动章节
+                        chapter = chapters.pop(from_pos)
+                        chapters.insert(to_pos, chapter)
+                        print(f"✅ 已将第{from_pos + 1}章移动到第{to_pos + 1}章位置")
+                    else:
+                        print("❌ 无效的章节位置")
+                else:
+                    print("❌ 命令格式错误，请使用: move <序号> to <新位置>")
+            except Exception:
+                print("❌ 移动操作失败")
+        elif command.startswith("delete chapter "):
+            try:
+                chapter_num = int(command[15:].strip()) - 1
+                chapters = outline_data.get("chapters", [])
+                
+                if 0 <= chapter_num < len(chapters):
+                    deleted_chapter = chapters.pop(chapter_num)
+                    print(f"✅ 已删除章节: {deleted_chapter.get('chapter_title', f'第{chapter_num + 1}章')}")
+                else:
+                    print("❌ 无效的章节序号")
+            except ValueError:
+                print("❌ 请提供有效的章节序号")
+        elif command.startswith("add point ") and " to " in command:
+            try:
+                # 解析 "add point 5 to 2" 格式
+                import re
+                match = re.match(r"add point (\d+) to (\d+)", command)
+                if match:
+                    point_idx = int(match.group(1))
+                    chapter_num = int(match.group(2)) - 1
+                    chapters = outline_data.get("chapters", [])
+                    
+                    if 0 <= point_idx < len(all_supporting_points) and 0 <= chapter_num < len(chapters):
+                        if point_idx not in chapters[chapter_num]["supporting_points_indices"]:
+                            chapters[chapter_num]["supporting_points_indices"].append(point_idx)
+                            print(f"✅ 已将论点{point_idx}添加到第{chapter_num + 1}章")
+                        else:
+                            print("⚠️ 该论点已存在于此章节中")
+                    else:
+                        print("❌ 无效的论点索引或章节序号")
+                else:
+                    print("❌ 命令格式错误，请使用: add point <论点序号> to <章节序号>")
+            except Exception:
+                print("❌ 添加操作失败")
+        elif command.startswith("remove point ") and " from " in command:
+            try:
+                # 解析 "remove point 3 from 1" 格式
+                import re
+                match = re.match(r"remove point (\d+) from (\d+)", command)
+                if match:
+                    point_idx = int(match.group(1))
+                    chapter_num = int(match.group(2)) - 1
+                    chapters = outline_data.get("chapters", [])
+                    
+                    if 0 <= chapter_num < len(chapters):
+                        if point_idx in chapters[chapter_num]["supporting_points_indices"]:
+                            chapters[chapter_num]["supporting_points_indices"].remove(point_idx)
+                            print(f"✅ 已从第{chapter_num + 1}章移除论点{point_idx}")
+                        else:
+                            print("⚠️ 该论点不在此章节中")
+                    else:
+                        print("❌ 无效的章节序号")
+                else:
+                    print("❌ 命令格式错误，请使用: remove point <论点序号> from <章节序号>")
+            except Exception:
+                print("❌ 移除操作失败")
+        else:
+            print("❌ 未知命令，输入 'help' 查看可用命令")
+    
+    return outline_data
 
 
 def main():
@@ -71,6 +254,51 @@ def main():
             print("   原始輸出:", points_json_string)
             return  # 無法繼續，提前退出
 
+        # --- 🤝 人機協作審批節點 ---
+        print("\n=== 🤝 人機協作審批節點 ===")
+        
+        while True:
+            # 展示AI生成的大纲供用户审阅
+            display_outline_for_review(outline_data, all_supporting_points)
+            
+            # 获取用户决定
+            user_choice = get_user_approval()
+            
+            if user_choice == 'Y':
+                print("\n✅ 用户已批准大纲，继续执行写作阶段...")
+                break
+            elif user_choice == 'N':
+                print("\n🔄 重新生成大纲...")
+                # 重新执行规划阶段
+                print("🚀 重新启动规划团队...")
+                crew_result = planning_crew.kickoff()
+                
+                if not crew_result or not crew_result.raw:
+                    print("❌ 重新生成失败，将使用原大纲")
+                    break
+                
+                outline_json_string = crew_result.raw
+                try:
+                    outline_data = json.loads(outline_json_string)
+                    print("✅ 新大纲生成完成！")
+                except json.JSONDecodeError:
+                    print("❌ 新大纲格式错误，将使用原大纲")
+                    break
+                # 继续循环，让用户再次审阅
+            elif user_choice == 'E':
+                print("\n🛠️  进入编辑模式...")
+                outline_data = edit_outline_interactively(outline_data, all_supporting_points)
+                print("\n✅ 大纲编辑完成！")
+                # 显示最终确认
+                print("\n📋 最终确认的大纲：")
+                display_outline_for_review(outline_data, all_supporting_points)
+                confirm = input("\n确认使用此大纲继续？[Y/n]: ").upper().strip()
+                if confirm != 'N':
+                    break
+            elif user_choice == 'Q':
+                print("\n👋 用户选择退出程序")
+                return
+        
         # --- 階段二：分章節寫作 ---
         print("\n=== 階段二：分章節寫作 ===")
 
