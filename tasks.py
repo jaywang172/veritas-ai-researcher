@@ -140,95 +140,107 @@ def create_review_task() -> Task:
 
 def create_citation_task() -> Task:
     return Task(
-        description='''以下是一篇經過編輯的完整論文：
+        description='''你是一位專業的學術引文格式化專家。你的唯一任務是從論文中提取URL並生成APA格式的參考文獻列表。
 
+**輸入論文內容**：
 {context}
 
-**你的引文格式化任務**：
-1. **URL提取**：掃描整篇論文，找出所有以 (http://...) 或 (https://...) 格式標註的來源URL
-2. **元數據檢索**：對每個URL，使用搜索工具查找或推斷以下資訊：
-   - 作者姓名
-   - 文章/網頁標題  
-   - 發布年份
-   - 來源網站/期刊名稱
-   - 存取日期
-3. **APA格式化**：將收集到的元數據轉換為標準APA引文格式
-4. **References生成**：創建完整的參考文獻列表
+**嚴格執行步驟**：
 
-**APA格式範例**：
-- 網頁文章：Author, A. A. (Year, Month Date). Title of web page. *Website Name*. URL
-- 學術期刊：Author, A. A. (Year). Title of article. *Journal Name*, Volume(Issue), pages. https://doi.org/xxx
-- 報告：Organization. (Year). *Title of report*. URL
+步驟1：URL提取
+- 仔細掃描論文，找出所有括號內的URL：(http://...) 或 (https://...)
+- 記錄每個完整的URL
 
-**處理原則**：
-- 如果無法找到作者，使用網站名稱
-- 如果無法確定發布年份，使用 (n.d.) 表示無日期
-- 所有URL都應保持完整
-- 按作者姓氏字母順序排列''',
-        expected_output='''一個完整的APA格式參考文獻列表，包含：
+步驟2：元數據檢索  
+- 對每個URL使用搜索工具查找：
+  * 作者或組織名稱
+  * 文章/網頁標題
+  * 發布年份
+  * 來源網站名稱
+- 如果無法找到，使用合理推斷
 
-## References
+步驟3：APA格式轉換
+- 網頁：Author, A. A. (Year, Month Date). Title of article. *Website Name*. URL
+- 報告：Organization. (Year). *Title of report*. URL  
+- 新聞：Author, A. A. (Year, Month Date). Article title. *News Site*. URL
+- 學術：Author, A. A. (Year). Article title. *Journal Name*, Volume(Issue), pages. DOI or URL
 
-Author, A. A. (2024, January 15). Example article title. *Journal Name*. https://example.com/article
-
-Organization Name. (2023). *Report title: Subtitle*. https://example.com/report
-
-Website Name. (n.d.). Web page title. https://example.com/page
-
-**格式要求**：
-- 嚴格遵循APA第7版標準
-- 按字母順序排列
+步驟4：排序和格式化
+- 按作者姓氏字母順序排列
 - 使用懸掛縮排
-- 確保所有URL可點擊且完整
-- 包含論文中引用的所有來源
+- 保持URL完整可點擊
 
-如果某些元數據無法確定，使用合理的學術慣例進行標註。''',
+**你必須輸出**：
+一個以 "## References" 開頭的完整參考文獻列表，包含論文中所有引用的來源。不要輸出任何其他內容、解釋或結論。
+
+**禁止輸出**：
+- 不要說"我現在知道最終答案"
+- 不要輸出總結性語句
+- 不要包含任何非引文內容
+- 不要省略任何找到的URL''',
+        expected_output='''## References
+
+[按字母順序排列的APA格式參考文獻條目]
+
+範例格式：
+Chen, L. (2024, March 10). Artificial intelligence in education. *Tech Review*. https://example.com/ai-education
+
+Ministry of Education. (2023). *Digital learning policy report*. https://example.com/policy-report
+
+Zhang, M., & Liu, K. (2024). Machine learning applications. *Journal of AI Research*, 15(3), 45-62. https://doi.org/10.1000/example
+
+**嚴格要求**：
+- 僅包含 "## References" 標題和引文條目
+- 每個條目占一行，使用APA第7版格式
+- 按作者姓氏字母排序
+- 保持所有URL完整
+- 包含論文中的所有引用來源''',
         agent=citation_formatter
     )
 
 def create_data_analysis_task(data_file_path: str, analysis_goal: str) -> Task:
     return Task(
-        description=f'''你需要执行一个完整的数据分析任务：
+        description=f'''你需要執行一個完整的數據分析任務：
 
-**数据文件路径**: {data_file_path}
-**分析目标**: {analysis_goal}
+**數據文件路徑**: {data_file_path}
+**分析目標**: {analysis_goal}
 
-**执行步骤**：
-1. **数据读取**: 使用FileReadTool读取指定路径的数据文件
-2. **数据探索**: 使用CodeInterpreterTool编写Python代码，分析数据结构、基本统计信息
-3. **目标分析**: 根据用户的分析目标，编写相应的分析代码
-4. **数据可视化**: 创建有意义的图表来展示分析结果
-5. **结果总结**: 将分析发现以清晰的文字形式总结
+**執行步驟**：
+1. **數據讀取**: 使用FileReadTool讀取指定路徑的數據文件
+2. **數據探索**: 使用CodeInterpreterTool編寫Python代碼，分析數據結構、基本統計信息
+3. **目標分析**: 根據用戶的分析目標，編寫相應的分析代碼
+4. **數據可視化**: 創建有意義的圖表來展示分析結果
+5. **結果總結**: 將分析發現以清晰的文字形式總結
 
-**代码要求**：
-- 使用pandas进行数据处理
-- 使用matplotlib/seaborn进行可视化
-- 必要时使用scikit-learn进行机器学习分析
-- 确保代码安全且可复现
-- 将生成的图表保存为PNG文件
+**代碼要求**：
+- 使用pandas進行數據處理
+- 使用matplotlib/seaborn進行可視化
+- 必要時使用scikit-learn進行機器學習分析
+- 確保代碼安全且可覆現
+- 將生成的圖表保存為PNG文件
 
-**输出格式**: 生成图表文件并提供分析摘要''',
-        expected_output='''一份完整的数据分析结果，包含：
+**輸出格式**: 生成圖表文件並提供分析摘要''',
+        expected_output='''一份完整的數據分析結果，包含：
 
-**数据概览**：
-- 数据维度：X行 Y列
+**數據概覽**：
+- 數據維度：X行 Y列
 - 主要字段：[字段1, 字段2, ...]
-- 数据质量：缺失值情况等
+- 數據質量：缺失值情況等
 
-**分析发现**：
-- 基于分析目标的关键发现
-- 数据中发现的模式、趋势或异常
-- 统计分析结果
+**分析發現**：
+- 基於分析目標的關鍵發現
+- 數據中發現的模式、趨勢或異常
+- 統計分析結果
 
-**可视化结果**：
-- 已生成图表文件：analysis_chart.png
-- 图表说明和解读
+**可視化結果**：
+- 已生成圖表文件：analysis_chart.png
+- 圖表說明和解讀
 
-**结论与建议**：
-- 基于分析结果的结论
-- 后续分析建议
+**結論與建議**：
+- 基於分析結果的結論
+- 後續分析建議
 
 示例格式：
-"通过对数据的分析，我们发现了以下关键模式：[具体发现]。详细的可视化结果已保存为 analysis_chart.png。建议进一步关注 [具体建议]。"''',
+"通過對數據的分析，我們發現了以下關鍵模式：[具體發現]。詳細的可視化結果已保存為 analysis_chart.png。建議進一步關注 [具體建議]。"''',
         agent=computational_scientist
     )

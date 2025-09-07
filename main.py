@@ -13,86 +13,86 @@ load_dotenv()
 def print_header():
     print("=" * 60)
     print("🔬 Veritas - 混合智能研究平台 (v2.0)".center(60))
-    print("🧠 文本+数据：文献综述 + 数据分析 + 智能报告".center(60))
+    print("🧠 文本+數據：文獻綜述 + 數據分析 + 智能報告".center(60))
     print("=" * 60 + "\n")
 
 
 def display_outline_for_review(outline_data, all_supporting_points):
-    """美化显示生成的大纲，供用户审阅"""
-    print("\n" + "🎯 AI 生成的论文大纲".center(50, "="))
-    print(f"\n📖 论文标题：{outline_data.get('title', '未定义标题')}")
-    print(f"📊 总论点数：{len(all_supporting_points)} 个")
-    print(f"📑 计划章节：{len(outline_data.get('chapters', []))} 章")
+    """美化顯示生成的大綱，供用戶審閱"""
+    print("\n" + "🎯 AI 生成的論文大綱".center(50, "="))
+    print(f"\n📖 論文標題：{outline_data.get('title', '未定義標題')}")
+    print(f"📊 總論點數：{len(all_supporting_points)} 個")
+    print(f"📑 計劃章節：{len(outline_data.get('chapters', []))} 章")
     
-    print("\n" + "📋 详细章节结构".center(50, "-"))
+    print("\n" + "📋 詳細章節結構".center(50, "-"))
     
     for i, chapter in enumerate(outline_data.get("chapters", []), 1):
         chapter_title = chapter.get("chapter_title", f"第{i}章")
         indices = chapter.get("supporting_points_indices", [])
         
         print(f"\n{i}. {chapter_title}")
-        print(f"   📌 使用论点: {len(indices)} 个 (索引: {indices})")
+        print(f"   📌 使用論點: {len(indices)} 個 (索引: {indices})")
         
-        # 显示该章节将使用的论点预览
-        if indices and len(indices) <= 3:  # 如果论点不多，显示简要内容
+        # 顯示該章節將使用的論點預覽
+        if indices and len(indices) <= 3:  # 如果論點不多，顯示簡要內容
             for idx in indices:
                 if idx < len(all_supporting_points):
                     point = all_supporting_points[idx]
-                    sentence = point.get('sentence', '未知论点')
-                    # 截断长句子
+                    sentence = point.get('sentence', '未知論點')
+                    # 截斷長句子
                     preview = sentence[:80] + "..." if len(sentence) > 80 else sentence
                     print(f"      • {preview}")
         elif indices:
-            # 论点太多时只显示数量
-            print(f"      • {len(indices)} 个论点将被整合到此章节")
+            # 論點太多時只顯示數量
+            print(f"      • {len(indices)} 個論點將被整合到此章節")
     
     print("\n" + "=" * 50)
 
 
 def get_user_approval():
-    """获取用户对大纲的审批决定"""
-    print("\n🤔 请审阅以上大纲，您希望如何继续？")
-    print("   [Y] 接受此大纲，继续写作")
-    print("   [N] 重新生成大纲") 
-    print("   [E] 手动编辑大纲 (高级功能)")
+    """獲取用戶對大綱的審批決定"""
+    print("\n🤔 請審閱以上大綱，您希望如何繼續？")
+    print("   [Y] 接受此大綱，繼續寫作")
+    print("   [N] 重新生成大綱") 
+    print("   [E] 手動編輯大綱 (高級功能)")
     print("   [Q] 退出程序")
     
     while True:
-        choice = input("\n请输入您的选择 [Y/N/E/Q]: ").upper().strip()
+        choice = input("\n請輸入您的選擇 [Y/N/E/Q]: ").upper().strip()
         if choice in ['Y', 'N', 'E', 'Q']:
             return choice
-        print("❌ 无效选择，请输入 Y、N、E 或 Q")
+        print("❌ 無效選擇，請輸入 Y、N、E 或 Q")
 
 
 def edit_outline_interactively(outline_data, all_supporting_points):
-    """交互式编辑大纲功能"""
-    print("\n🛠️  进入大纲编辑模式")
+    """交互式編輯大綱功能"""
+    print("\n🛠️  進入大綱編輯模式")
     print("━" * 50)
     print("可用命令:")
-    print("  • edit title <新标题>        - 修改论文标题")
-    print("  • edit chapter <序号> <新标题> - 修改章节标题")
-    print("  • move <章节序号> to <新位置>  - 移动章节位置")
-    print("  • delete chapter <序号>      - 删除章节")
-    print("  • add point <论点序号> to <章节序号> - 添加论点到章节")
-    print("  • remove point <论点序号> from <章节序号> - 从章节移除论点")
-    print("  • show                       - 显示当前大纲")
-    print("  • done                       - 完成编辑")
-    print("  • help                       - 显示帮助")
+    print("  • edit title <新標題>        - 修改論文標題")
+    print("  • edit chapter <序號> <新標題> - 修改章節標題")
+    print("  • move <章節序號> to <新位置>  - 移動章節位置")
+    print("  • delete chapter <序號>      - 刪除章節")
+    print("  • add point <論點序號> to <章節序號> - 添加論點到章節")
+    print("  • remove point <論點序號> from <章節序號> - 從章節移除論點")
+    print("  • show                       - 顯示當前大綱")
+    print("  • done                       - 完成編輯")
+    print("  • help                       - 顯示幫助")
     print("━" * 50)
     
     while True:
-        command = input("\n📝 请输入编辑命令: ").strip().lower()
+        command = input("\n📝 請輸入編輯命令: ").strip().lower()
         
         if command == "done":
-            print("✅ 编辑完成！")
+            print("✅ 編輯完成！")
             break
         elif command == "show":
             display_outline_for_review(outline_data, all_supporting_points)
         elif command == "help":
-            print("\n📚 编辑命令帮助：")
+            print("\n📚 編輯命令幫助：")
             print("例子:")
-            print("  edit title AI对教育的影响分析")
-            print("  edit chapter 2 人工智能的教育应用")
+            print("  edit title AI對教育的影響分析")
+            print("  edit chapter 2 人工智能的教育應用")
             print("  move 3 to 2")
             print("  delete chapter 4")
             print("  add point 5 to 2")
@@ -101,22 +101,22 @@ def edit_outline_interactively(outline_data, all_supporting_points):
             new_title = command[11:].strip()
             if new_title:
                 outline_data["title"] = new_title
-                print(f"✅ 标题已更新为: {new_title}")
+                print(f"✅ 標題已更新為: {new_title}")
             else:
-                print("❌ 请提供新标题")
+                print("❌ 請提供新標題")
         elif command.startswith("edit chapter "):
             try:
                 parts = command[13:].strip().split(" ", 1)
-                chapter_num = int(parts[0]) - 1  # 转换为0索引
+                chapter_num = int(parts[0]) - 1  # 轉換為0索引
                 new_title = parts[1] if len(parts) > 1 else ""
                 
                 if 0 <= chapter_num < len(outline_data.get("chapters", [])) and new_title:
                     outline_data["chapters"][chapter_num]["chapter_title"] = new_title
-                    print(f"✅ 第{chapter_num + 1}章标题已更新为: {new_title}")
+                    print(f"✅ 第{chapter_num + 1}章標題已更新為: {new_title}")
                 else:
-                    print("❌ 无效的章节序号或标题")
+                    print("❌ 無效的章節序號或標題")
             except (ValueError, IndexError):
-                print("❌ 命令格式错误，请使用: edit chapter <序号> <新标题>")
+                print("❌ 命令格式錯誤，請使用: edit chapter <序號> <新標題>")
         elif command.startswith("move "):
             try:
                 # 解析 "move 3 to 2" 格式
@@ -128,16 +128,16 @@ def edit_outline_interactively(outline_data, all_supporting_points):
                     chapters = outline_data.get("chapters", [])
                     
                     if 0 <= from_pos < len(chapters) and 0 <= to_pos < len(chapters):
-                        # 移动章节
+                        # 移動章節
                         chapter = chapters.pop(from_pos)
                         chapters.insert(to_pos, chapter)
-                        print(f"✅ 已将第{from_pos + 1}章移动到第{to_pos + 1}章位置")
+                        print(f"✅ 已將第{from_pos + 1}章移動到第{to_pos + 1}章位置")
                     else:
-                        print("❌ 无效的章节位置")
+                        print("❌ 無效的章節位置")
                 else:
-                    print("❌ 命令格式错误，请使用: move <序号> to <新位置>")
+                    print("❌ 命令格式錯誤，請使用: move <序號> to <新位置>")
             except Exception:
-                print("❌ 移动操作失败")
+                print("❌ 移動操作失敗")
         elif command.startswith("delete chapter "):
             try:
                 chapter_num = int(command[15:].strip()) - 1
@@ -145,11 +145,11 @@ def edit_outline_interactively(outline_data, all_supporting_points):
                 
                 if 0 <= chapter_num < len(chapters):
                     deleted_chapter = chapters.pop(chapter_num)
-                    print(f"✅ 已删除章节: {deleted_chapter.get('chapter_title', f'第{chapter_num + 1}章')}")
+                    print(f"✅ 已刪除章節: {deleted_chapter.get('chapter_title', f'第{chapter_num + 1}章')}")
                 else:
-                    print("❌ 无效的章节序号")
+                    print("❌ 無效的章節序號")
             except ValueError:
-                print("❌ 请提供有效的章节序号")
+                print("❌ 請提供有效的章節序號")
         elif command.startswith("add point ") and " to " in command:
             try:
                 # 解析 "add point 5 to 2" 格式
@@ -163,15 +163,15 @@ def edit_outline_interactively(outline_data, all_supporting_points):
                     if 0 <= point_idx < len(all_supporting_points) and 0 <= chapter_num < len(chapters):
                         if point_idx not in chapters[chapter_num]["supporting_points_indices"]:
                             chapters[chapter_num]["supporting_points_indices"].append(point_idx)
-                            print(f"✅ 已将论点{point_idx}添加到第{chapter_num + 1}章")
+                            print(f"✅ 已將論點{point_idx}添加到第{chapter_num + 1}章")
                         else:
-                            print("⚠️ 该论点已存在于此章节中")
+                            print("⚠️ 該論點已存在於此章節中")
                     else:
-                        print("❌ 无效的论点索引或章节序号")
+                        print("❌ 無效的論點索引或章節序號")
                 else:
-                    print("❌ 命令格式错误，请使用: add point <论点序号> to <章节序号>")
+                    print("❌ 命令格式錯誤，請使用: add point <論點序號> to <章節序號>")
             except Exception:
-                print("❌ 添加操作失败")
+                print("❌ 添加操作失敗")
         elif command.startswith("remove point ") and " from " in command:
             try:
                 # 解析 "remove point 3 from 1" 格式
@@ -185,23 +185,23 @@ def edit_outline_interactively(outline_data, all_supporting_points):
                     if 0 <= chapter_num < len(chapters):
                         if point_idx in chapters[chapter_num]["supporting_points_indices"]:
                             chapters[chapter_num]["supporting_points_indices"].remove(point_idx)
-                            print(f"✅ 已从第{chapter_num + 1}章移除论点{point_idx}")
+                            print(f"✅ 已從第{chapter_num + 1}章移除論點{point_idx}")
                         else:
-                            print("⚠️ 该论点不在此章节中")
+                            print("⚠️ 該論點不在此章節中")
                     else:
-                        print("❌ 无效的章节序号")
+                        print("❌ 無效的章節序號")
                 else:
-                    print("❌ 命令格式错误，请使用: remove point <论点序号> from <章节序号>")
+                    print("❌ 命令格式錯誤，請使用: remove point <論點序號> from <章節序號>")
             except Exception:
-                print("❌ 移除操作失败")
+                print("❌ 移除操作失敗")
         else:
-            print("❌ 未知命令，输入 'help' 查看可用命令")
+            print("❌ 未知命令，輸入 'help' 查看可用命令")
     
     return outline_data
 
 
 def run_literature_review_workflow(topic):
-    """执行传统的文献综述工作流"""
+    """執行傳統的文獻綜述工作流"""
     print(f"\n📚 正在研究主題：{topic}")
 
     try:
@@ -233,7 +233,7 @@ def run_literature_review_workflow(topic):
         print("\n✅ 論文大綱JSON生成完畢！")
         outline_data = json.loads(outline_json_string)
 
-        if not summarize_task.output or not summarize_task.output.raw:  # 检查 .raw
+        if not summarize_task.output or not summarize_task.output.raw:  # 檢查 .raw
             raise ValueError("摘要任務未能生成有效的論點列表。")
 
         points_json_string = summarize_task.output.raw
@@ -252,45 +252,45 @@ def run_literature_review_workflow(topic):
         print("\n=== 🤝 人機協作審批節點 ===")
         
         while True:
-            # 展示AI生成的大纲供用户审阅
+            # 展示AI生成的大綱供用戶審閱
             display_outline_for_review(outline_data, all_supporting_points)
             
-            # 获取用户决定
+            # 獲取用戶決定
             user_choice = get_user_approval()
             
             if user_choice == 'Y':
-                print("\n✅ 用户已批准大纲，继续执行写作阶段...")
+                print("\n✅ 用戶已批準大綱，繼續執行寫作階段...")
                 break
             elif user_choice == 'N':
-                print("\n🔄 重新生成大纲...")
-                # 重新执行规划阶段
-                print("🚀 重新启动规划团队...")
+                print("\n🔄 重新生成大綱...")
+                # 重新執行規劃階段
+                print("🚀 重新啟動規劃團隊...")
                 crew_result = planning_crew.kickoff()
                 
                 if not crew_result or not crew_result.raw:
-                    print("❌ 重新生成失败，将使用原大纲")
+                    print("❌ 重新生成失敗，將使用原大綱")
                     break
                 
                 outline_json_string = crew_result.raw
                 try:
                     outline_data = json.loads(outline_json_string)
-                    print("✅ 新大纲生成完成！")
+                    print("✅ 新大綱生成完成！")
                 except json.JSONDecodeError:
-                    print("❌ 新大纲格式错误，将使用原大纲")
+                    print("❌ 新大綱格式錯誤，將使用原大綱")
                     break
-                # 继续循环，让用户再次审阅
+                # 繼續循環，讓用戶再次審閱
             elif user_choice == 'E':
-                print("\n🛠️  进入编辑模式...")
+                print("\n🛠️  進入編輯模式...")
                 outline_data = edit_outline_interactively(outline_data, all_supporting_points)
-                print("\n✅ 大纲编辑完成！")
-                # 显示最终确认
-                print("\n📋 最终确认的大纲：")
+                print("\n✅ 大綱編輯完成！")
+                # 顯示最終確認
+                print("\n📋 最終確認的大綱：")
                 display_outline_for_review(outline_data, all_supporting_points)
-                confirm = input("\n确认使用此大纲继续？[Y/n]: ").upper().strip()
+                confirm = input("\n確認使用此大綱繼續？[Y/n]: ").upper().strip()
                 if confirm != 'N':
                     break
             elif user_choice == 'Q':
-                print("\n👋 用户选择退出程序")
+                print("\n👋 用戶選擇退出程序")
                 return
         
         # --- 階段二：分章節寫作 ---
@@ -380,6 +380,17 @@ def run_literature_review_workflow(topic):
             complete_paper_content = final_paper_content
         else:
             references_content = references_result.raw
+            
+            # 驗證引文輸出品質
+            if "我現在知道最終答案" in references_content or "Final Answer" in references_content:
+                print("⚠️ 檢測到引文格式化輸出異常，嘗試使用備用格式...")
+                # 創建基本的參考文獻列表
+                references_content = "\n\n## References\n\n注意：此論文包含多個網路來源引用，請手動驗證和格式化參考文獻。"
+            elif not references_content.strip().startswith("## References"):
+                print("⚠️ 引文格式不正確，正在修正...")
+                # 確保有正確的標題
+                references_content = "## References\n\n" + references_content.strip()
+            
             # 將參考文獻添加到論文末尾
             complete_paper_content = final_paper_content + "\n\n" + references_content
             print("✅ 引文格式化完成！已生成APA格式參考文獻列表。")
@@ -403,77 +414,77 @@ def run_literature_review_workflow(topic):
 
 
 def run_data_analysis_workflow():
-    """执行新的数据分析工作流"""
-    print("\n🔬 正在准备数据分析工作流...")
+    """執行新的數據分析工作流"""
+    print("\n🔬 正在準備數據分析工作流...")
     
-    # 获取用户输入
-    data_file_path = input("请输入数据文件路径 (支持 .csv, .xlsx, .json): ")
+    # 獲取用戶輸入
+    data_file_path = input("請輸入數據文件路徑 (支持 .csv, .xlsx, .json): ")
     if not data_file_path:
-        print("❌ 错误：数据文件路径不能为空。")
+        print("❌ 錯誤：數據文件路徑不能為空。")
         return
         
-    analysis_goal = input("请描述您的分析目标 (例如：探索数据分布，寻找相关性等): ")
+    analysis_goal = input("請描述您的分析目標 (例如：探索數據分布，尋找相關性等): ")
     if not analysis_goal:
-        print("❌ 错误：分析目标不能为空。")
+        print("❌ 錯誤：分析目標不能為空。")
         return
     
-    print(f"\n📊 数据文件：{data_file_path}")
-    print(f"🎯 分析目标：{analysis_goal}")
+    print(f"\n📊 數據文件：{data_file_path}")
+    print(f"🎯 分析目標：{analysis_goal}")
     
     try:
-        # --- 阶段一：数据分析 ---
-        print("\n=== 阶段一：数据分析执行 ===")
-        print("🧪 启动计算科学家进行数据分析...")
+        # --- 階段一：數據分析 ---
+        print("\n=== 階段一：數據分析執行 ===")
+        print("🧪 啟動計算科學家進行數據分析...")
         
-        # 创建数据分析任务
+        # 創建數據分析任務
         analysis_task = create_data_analysis_task(data_file_path, analysis_goal)
         
-        # 创建专门的数据分析Crew
+        # 創建專門的數據分析Crew
         analysis_crew = Crew(
             agents=[computational_scientist],
             tasks=[analysis_task],
             verbose=True
         )
         
-        # 执行数据分析
+        # 執行數據分析
         analysis_result = analysis_crew.kickoff()
         
         if not analysis_result or not analysis_result.raw:
-            print("⚠️ 数据分析失败，无法生成报告。")
+            print("⚠️ 數據分析失敗，無法生成報告。")
             return
         
         analysis_summary = analysis_result.raw
-        print("✅ 数据分析完成！")
+        print("✅ 數據分析完成！")
         
-        # --- 阶段二：报告生成 ---
-        print("\n=== 阶段二：分析报告撰写 ===")
-        print("📝 正在将分析结果转化为学术报告...")
+        # --- 階段二：報告生成 ---
+        print("\n=== 階段二：分析報告撰寫 ===")
+        print("📝 正在將分析結果轉化為學術報告...")
         
-        # 将分析结果包装成"论点"格式
+        # 將分析結果包裝成"論點"格式
         analysis_point = {
             "sentence": analysis_summary,
-            "source": f"本地数据分析: {data_file_path}"
+            "source": f"本地數據分析: {data_file_path}"
         }
         
-        # 创建简化的报告大纲
+        # 創建簡化的報告大綱
         simple_outline = {
-            "title": f"数据分析报告：{analysis_goal}",
+            "title": f"數據分析報告：{analysis_goal}",
             "chapters": [
                 {"chapter_title": "1. 引言", "supporting_points_indices": [0]},
-                {"chapter_title": "2. 数据分析结果", "supporting_points_indices": [0]},
-                {"chapter_title": "3. 结论与建议", "supporting_points_indices": [0]}
+                {"chapter_title": "2. 數據分析結果", "supporting_points_indices": [0]},
+                {"chapter_title": "3. 結論與建議", "supporting_points_indices": [0]}
             ]
         }
         
-        # 使用现有的写作流程生成报告
+        # 使用現有的寫作流程生成報告
         all_points = [analysis_point]
         full_report_content = f"# {simple_outline['title']}\n\n"
         
         for chapter in simple_outline["chapters"]:
             chapter_title = chapter["chapter_title"]
-            print(f"\n✍️ 正在撰写章节：{chapter_title}...")
+            print(f"\n✍️ 正在撰寫章節：{chapter_title}...")
             
-            # 为每个章节创建写作任务
+            # 為每個章節創建寫作任務
             writing_task = create_writing_task(chapter_title, json.dumps(all_points, ensure_ascii=False, indent=2))
             
             writing_crew = Crew(
@@ -486,13 +497,13 @@ def run_data_analysis_workflow():
             if chapter_result and chapter_result.raw:
                 chapter_content = chapter_result.raw
             else:
-                chapter_content = "[章节内容生成失败]"
+                chapter_content = "[章節內容生成失敗]"
             
             full_report_content += f"## {chapter_title}\n\n{chapter_content}\n\n"
-            print(f"✅ 章节「{chapter_title}」撰写完毕！")
+            print(f"✅ 章節「{chapter_title}」撰寫完畢！")
         
-        # --- 阶段三：最终输出 ---
-        print("\n=== 阶段三：报告保存 ===")
+        # --- 階段三：最終輸出 ---
+        print("\n=== 階段三：報告保存 ===")
         
         # 生成文件名
         safe_goal = "".join(c for c in analysis_goal if c.isalnum() or c in (' ', '-', '_')).rstrip()
@@ -502,32 +513,32 @@ def run_data_analysis_workflow():
             f.write(full_report_content)
         
         print("\n\n" + "=" * 60)
-        print("🎉 数据分析报告生成成功！".center(60))
+        print("🎉 數據分析報告生成成功！".center(60))
         print("=" * 60 + "\n")
-        print(f"📄 报告已保存为：{filename}")
-        print("📊 包含数据分析结果和可视化图表！")
+        print(f"📄 報告已保存為：{filename}")
+        print("📊 包含數據分析結果和可視化圖表！")
         
     except Exception as e:
-        print(f"\n❌ 数据分析发生错误: {e}")
+        print(f"\n❌ 數據分析發生錯誤: {e}")
 
 
 def main():
-    """主函数 - 动态工作流选择器"""
+    """主函數 - 動態工作流選擇器"""
     print_header()
     
-    print("🤖 欢迎使用 Veritas v2.0 多元智能研究平台！")
-    print("请选择您要使用的工作流：")
-    print("  [1] 📚 文献综述模式 - 基于网络搜索的学术论文生成")
-    print("  [2] 📊 数据分析模式 - 基于本地数据的分析报告生成")
+    print("🤖 歡迎使用 Veritas v2.0 多元智能研究平台！")
+    print("請選擇您要使用的工作流：")
+    print("  [1] 📚 文獻綜述模式 - 基於網絡搜索的學術論文生成")
+    print("  [2] 📊 數據分析模式 - 基於本地數據的分析報告生成")
     print("  [Q] 退出程序")
     
     while True:
-        choice = input("\n请输入您的选择 [1/2/Q]: ").upper().strip()
+        choice = input("\n請輸入您的選擇 [1/2/Q]: ").upper().strip()
         
         if choice == '1':
-            topic = input("\n请输入您想研究的主題: ")
+            topic = input("\n請輸入您想研究的主題: ")
             if not topic:
-                print("❌ 错误：研究主题不能为空。")
+                print("❌ 錯誤：研究主題不能為空。")
                 continue
             run_literature_review_workflow(topic)
             break
@@ -535,10 +546,10 @@ def main():
             run_data_analysis_workflow()
             break
         elif choice == 'Q':
-            print("\n👋 感谢使用 Veritas，再见！")
+            print("\n👋 感謝使用 Veritas，再見！")
             return
         else:
-            print("❌ 无效选择，请输入 1、2 或 Q")
+            print("❌ 無效選擇，請輸入 1、2 或 Q")
 
 
 if __name__ == "__main__":

@@ -8,14 +8,14 @@ from crewai import Agent
 from tools import search_tools, computational_tools
 from config import LLMFactory, print_llm_configuration
 
-# --- 將 Agent 的創建邏輯封裝在類中，支持可配置的LLM ---
+# --- 將 Agent 的建立邏輯封裝在類別中，支援可配置的LLM ---
 class VeritasAgents:
     def __init__(self):
-        """初始化時打印LLM配置概览"""
+        """初始化時列印LLM配置概覽"""
         print_llm_configuration()
     
     def literature_scout_agent(self) -> Agent:
-        # 为文献搜集创建优化的LLM实例
+        # 為文獻搜集建立最佳化的LLM實例
         llm = LLMFactory.create_agent_llm("literature_scout")
         return Agent(
             role="文獻搜集代理人",
@@ -29,7 +29,7 @@ class VeritasAgents:
         )
 
     def synthesizer_agent(self) -> Agent:
-        # 为研究分析创建平衡的LLM实例
+        # 為研究分析創建平衡的LLM實例
         llm = LLMFactory.create_agent_llm("synthesizer")
         return Agent(
             role='研究分析師 (Research Analyst)',
@@ -49,7 +49,7 @@ class VeritasAgents:
         )
 
     def outline_planner_agent(self) -> Agent:
-        # 为大纲规划创建高级的LLM实例
+        # 為大綱規劃創建高級的LLM實例
         llm = LLMFactory.create_agent_llm("outline_planner")
         return Agent(
             role='資深學術規劃師 (Senior Academic Planner)',
@@ -69,7 +69,7 @@ class VeritasAgents:
         )
 
     def academic_writer_agent(self) -> Agent:
-        # 为学术写作创建顶级的LLM实例
+        # 為學術寫作創建頂級的LLM實例
         llm = LLMFactory.create_agent_llm("academic_writer")
         return Agent(
             role='學術寫作專家 (Academic Writing Specialist)',
@@ -89,7 +89,7 @@ class VeritasAgents:
         )
 
     def editor_agent(self) -> Agent:
-        # 为编辑审阅创建顶级的LLM实例
+        # 為編輯審閱創建頂級的LLM實例
         llm = LLMFactory.create_agent_llm("editor")
         return Agent(
             role='首席學術編輯 (Chief Academic Editor)',
@@ -109,29 +109,31 @@ class VeritasAgents:
         )
 
     def citation_formatter_agent(self) -> Agent:
-        # 为引文格式化创建高性价比的LLM实例
+        # 為引文格式化創建高效能的LLM實例
         llm = LLMFactory.create_agent_llm("citation_formatter")
         return Agent(
-            role='學術引文格式化專家 (Citation Formatting Specialist)',
+            role='專業學術引文格式化專家 (Professional Academic Citation Specialist)',
             goal=(
-                '從論文中提取所有引用的URL，智能分析每個來源的元數據（作者、標題、發布時間、來源等），'
-                '並將其轉換為符合APA格式標準的參考文獻條目，最終生成完整的References列表。'
+                '精確提取論文中所有URL引用，使用搜索工具獲取元數據，'
+                '並嚴格按照APA第7版格式生成完整的References參考文獻列表。'
+                '絕不輸出任何總結性語句或結論，只輸出格式化的引文列表。'
             ),
             backstory=(
-                '你是一位精通各種學術引文格式的資訊科學專家，擅長從網路資源中提取準確的元數據。'
-                '你對APA、MLA、Chicago等引文格式瞭如指掌，能夠快速識別不同類型的來源'
-                '（學術期刊、新聞文章、報告、網站等）並應用相應的格式規則。'
-                '你具備卓越的資訊檢索能力，能夠從URL、標題或簡短描述中推斷出完整的引文資訊。'
-                '你的工作確保每篇論文都符合國際學術發表的引文標準。'
+                '你是一位在頂尖學術期刊工作20年的專業引文編輯，對APA格式的每個細節都瞭如指掌。'
+                '你擅長從URL中準確提取元數據，包括作者、標題、發布日期和來源網站。'
+                '你的專業素養要求你只專注於引文格式化任務，絕不偏離主題或添加不必要的評論。'
+                '你的輸出必須是純粹的APA格式References列表，沒有任何額外內容。'
+                '你使用搜索工具來驗證和完善每個引用來源的準確性。'
+                '你堅持"只做引文，不做總結"的職業原則。'
             ),
-            tools=search_tools,  # 賦予搜索能力以查找元數據
+            tools=search_tools,  # 賦予搜尋能力以查找元資料
             llm=llm,
             verbose=True,
             allow_delegation=False,
         )
 
     def computational_scientist_agent(self) -> Agent:
-        # 为计算科学创建顶级的LLM实例
+        # 為計算科學創建頂級的LLM實例
         llm = LLMFactory.create_agent_llm("computational_scientist")
         return Agent(
             role='計算科學家 (Computational Scientist)',
