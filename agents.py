@@ -6,17 +6,17 @@ Contains definitions for all agents in the Veritas system.
 
 from crewai import Agent
 from tools import search_tools
-from langchain_openai import ChatOpenAI
+from config import LLMFactory, print_llm_configuration
 
-# Initialize the language model
-llm = ChatOpenAI(
-    model="gpt-4.1",
-    temperature=0.1
-)
-
-# --- 將 Agent 的創建邏輯封裝在類中 ---
+# --- 將 Agent 的創建邏輯封裝在類中，支持可配置的LLM ---
 class VeritasAgents:
+    def __init__(self):
+        """初始化時打印LLM配置概览"""
+        print_llm_configuration()
+    
     def literature_scout_agent(self) -> Agent:
+        # 为文献搜集创建优化的LLM实例
+        llm = LLMFactory.create_agent_llm("literature_scout")
         return Agent(
             role="文獻搜集代理人",
             goal="根據給定的研究主題，從網路上搜集相關的學術文獻和資料",
@@ -29,6 +29,8 @@ class VeritasAgents:
         )
 
     def synthesizer_agent(self) -> Agent:
+        # 为研究分析创建平衡的LLM实例
+        llm = LLMFactory.create_agent_llm("synthesizer")
         return Agent(
             role='研究分析師 (Research Analyst)',
             goal=(
@@ -47,6 +49,8 @@ class VeritasAgents:
         )
 
     def outline_planner_agent(self) -> Agent:
+        # 为大纲规划创建高级的LLM实例
+        llm = LLMFactory.create_agent_llm("outline_planner")
         return Agent(
             role='資深學術規劃師 (Senior Academic Planner)',
             goal=(
@@ -65,6 +69,8 @@ class VeritasAgents:
         )
 
     def academic_writer_agent(self) -> Agent:
+        # 为学术写作创建顶级的LLM实例
+        llm = LLMFactory.create_agent_llm("academic_writer")
         return Agent(
             role='學術寫作專家 (Academic Writing Specialist)',
             goal=(
@@ -83,6 +89,8 @@ class VeritasAgents:
         )
 
     def editor_agent(self) -> Agent:
+        # 为编辑审阅创建顶级的LLM实例
+        llm = LLMFactory.create_agent_llm("editor")
         return Agent(
             role='首席學術編輯 (Chief Academic Editor)',
             goal=(
@@ -101,6 +109,8 @@ class VeritasAgents:
         )
 
     def citation_formatter_agent(self) -> Agent:
+        # 为引文格式化创建高性价比的LLM实例
+        llm = LLMFactory.create_agent_llm("citation_formatter")
         return Agent(
             role='學術引文格式化專家 (Citation Formatting Specialist)',
             goal=(
