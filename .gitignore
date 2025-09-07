@@ -1,46 +1,124 @@
-# Python
+# ===============================================
+# Veritas v3.0 - Git 忽略檔案配置
+# ===============================================
+
+# --- Python 相關 ---
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
 *.egg-info/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Environments
+# --- 虛擬環境 ---
 venv/
 .venv/
 env/
+.env/
+ENV/
+env.bak/
+venv.bak/
 
-# OS / Editors
-.DS_Store
-.idea/
-.vscode/
-
-# Builds
-dist/
-build/
-
-# Secrets
+# --- 環境變數與敏感資訊 ---
 .env
-# Environment variables
-.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.key
+*.pem
+config.ini
 
-# Virtual environment
-venv/
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# IDE
+# --- IDE 與編輯器 ---
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.spyderproject
+.spyproject
+.rope_project_history
+.ropeproject
 
-# OS
+# --- 作業系統 ---
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
-# Logs
+# --- 測試與覆蓋率 ---
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# --- 日誌檔案 ---
 *.log
+logs/
+log/
+
+# --- 資料檔案（可選排除） ---
+*.csv
+*.xlsx
+*.json
+*.xml
+!sales_data.csv  # 保留範例檔案
+
+# --- 生成的報告和圖表 ---
+*_draft.txt
+*_report.txt
+*_analysis.txt
+*.png
+*.jpg
+*.pdf
+!analysis_chart.png  # 保留範例圖表
+
+# --- 臨時檔案 ---
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# --- Jupyter Notebook ---
+.ipynb_checkpoints
+
+# --- Docker ---
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# --- 其他工具 ---
+.sass-cache/
+.grunt/
+node_modules/
+.npm
+.yarn-integrity
