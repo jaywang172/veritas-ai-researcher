@@ -138,7 +138,7 @@ class VeritasAgents:
         return Agent(
             role='計算科學家 (Computational Scientist)',
             goal=(
-                '使用提供的工具（FileReadTool和CodeInterpreterTool）讀取數據文件，'
+                '使用提供的工具（FileReadTool和LocalCodeExecutor）讀取數據文件，'
                 '編寫並執行Python程式碼進行數據分析和可視化，'
                 '並以清晰的文本形式報告關鍵發現和洞察。'
             ),
@@ -150,7 +150,8 @@ class VeritasAgents:
                 '並將複雜的統計結果轉化為易於理解的視覺圖表和文字說明。'
                 '你特別注重數據安全和隱私保護，始終遵循最佳實踐。'
                 '重要：當需要讀取文件時，你會主動使用FileReadTool；'
-                '當需要執行代碼時，你會使用CodeInterpreterTool並明確指定所需的庫依賴。'
+                '當需要執行代碼時，你會使用LocalCodeExecutor，它能在本地環境中可靠地執行代碼，'
+                '支援所有已安裝的Python函式庫，包括matplotlib、seaborn等可視化工具。'
             ),
             tools=computational_tools,  # 賦予文件讀取和代碼執行能力
             llm=llm,

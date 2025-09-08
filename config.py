@@ -184,7 +184,7 @@ AGENT_LLM_MAPPING = {
     "academic_writer": "gpt-5-mini",          # 學術寫作：頂級任務，需要創造力
     "editor": "gpt-5",                       # 編輯審閱：頂級任務，需要語言精通
     "citation_formatter": "gpt-4.1-mini",    # 引文格式化：需要準確的URL解析和格式化
-    "computational_scientist": "gpt-4o",          # 計算科學：可靠的工具使用能力
+    "computational_scientist": "gpt-4.1",          # 計算科學：可靠的工具使用能力
     "project_manager": "o3",                 # 專案管理：頂級任務，需要策略思維和決策能力
 }
 
@@ -244,7 +244,7 @@ class LLMFactory:
             ChatOpenAI實例
         """
         if agent_type not in AGENT_LLM_MAPPING:
-            print(f"⚠️ 未找到Agent '{agent_type}' 的專用配置，使用默認配置")
+            print(f"未找到Agent '{agent_type}' 的專用配置，使用默認配置")
             config_name = "gpt-4.1"
         else:
             config_name = AGENT_LLM_MAPPING[agent_type]
@@ -387,7 +387,7 @@ class LLMFactory:
 
 def print_llm_configuration():
     """列印目前LLM配置概覽"""
-    print("\n🧠 Veritas 多元智慧配置概覽")
+    print("\nVeritas 多元智慧配置概覽")
     print("=" * 70)
     print(f"{'Agent類型':<20} {'使用模型':<15} {'效能級別':<10} {'預估成本/1K tokens'}")
     print("-" * 70)
@@ -405,13 +405,13 @@ def print_llm_configuration():
 
 def print_budget_comparison():
     """打印不同預算級別的比較"""
-    print("\n💰 預算級別對比分析")
+    print("\n預算級別對比分析")
     print("=" * 80)
     
     comparison = LLMFactory.compare_configurations()
     
     for tier, data in comparison.items():
-        print(f"\n📊 {tier.upper()} 配置:")
+        print(f"\n{tier.upper()} 配置:")
         print(f"   總成本: ${data['total_cost']:.4f} (每輪)")
         if data['cost_savings_vs_premium'] > 0:
             print(f"   節省: {data['cost_savings_vs_premium']:.1f}% vs Premium")
@@ -421,7 +421,7 @@ def print_budget_comparison():
             print(f"      {agent:<18}: {info['model']:<15} ({info['tier']} tier)")
     
     print("\n" + "=" * 80)
-    print("💡 建議:")
+    print("建議:")
     print("   • Economy: 適合大規模應用或預算緊張的場景")
     print("   • Balanced: 推薦配置，性能與成本的最佳平衡")  
     print("   • Premium: 適合對質量要求極高的重要任務")
@@ -433,16 +433,16 @@ if __name__ == "__main__":
     print_budget_comparison()
     
     # 測試創建不同類型的LLM
-    print("\n🧪 LLM創建測試:")
+    print("\nLLM創建測試:")
     for agent_type in ["literature_scout", "academic_writer"]:
         llm = LLMFactory.create_agent_llm(agent_type)
         config_name = AGENT_LLM_MAPPING[agent_type]
         print(f"  {agent_type}: {llm.model_name} (配置: {config_name})")
     
     # 測試預算友好配置
-    print("\n💰 預算友好配置測試:")
+    print("\n預算友好配置測試:")
     for tier in ["economy", "balanced", "premium"]:
         llm = LLMFactory.create_budget_conscious_llm("academic_writer", tier)
         print(f"  {tier} writer: {llm.model_name}")
     
-    print("\n✅ 配置系統測試完成！")
+    print("\n配置系統測試完成！")
