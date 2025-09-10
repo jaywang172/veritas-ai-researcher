@@ -7,14 +7,14 @@ from pathlib import Path
 
 def setup_api_keys():
     """引導用戶設置 API Keys"""
-    print("🔑 Veritas v3.0 API Keys 設置")
+    print("Veritas v3.0 API Keys 設置")
     print("=" * 50)
     print()
     
     # 讀取當前 .env 檔案
     env_file = Path('.env')
     if not env_file.exists():
-        print("❌ .env 檔案不存在，請先運行：python create_env.py")
+        print(".env 檔案不存在，請先創造api")
         return
     
     print("請設置您的 API Keys：")
@@ -26,7 +26,7 @@ def setup_api_keys():
     openai_key = input("   請輸入您的 OpenAI API Key (sk-...): ").strip()
     
     if not openai_key or openai_key == 'your_openai_api_key_here':
-        print("❌ 必須提供有效的 OpenAI API Key")
+        print("必須提供有效的 OpenAI API Key")
         return
     
     print()
@@ -61,7 +61,7 @@ GOOGLE_API_KEY=your_google_api_key_here
         f.write(env_content)
     
     print()
-    print("✅ API Keys 已設置完成！")
+    print("API Keys 已設置完成！")
     print("現在可以運行：python main.py")
 
 if __name__ == "__main__":
