@@ -1,16 +1,83 @@
-# 🔬 Veritas v3.0 - 混合智能研究平台
+# 🔬 Veritas v3.1 - 智能審稿迴圈研究平台
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
-[![CrewAI](https://img.shields.io/badge/CrewAI-Latest-green.svg)](https://crewai.com)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Latest-orange.svg)](https://langchain.com)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://python.org)
+[![CrewAI](https://img.shields.io/badge/CrewAI-0.177+-green.svg)](https://crewai.com)
+[![LangGraph](https://img.shields.io/badge/LangGraph-0.2+-orange.svg)](https://langchain.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Quality](https://img.shields.io/badge/Quality-Enterprise-gold.svg)](README.md)
 
-> **突破性的自主混合智能研究平台**  
-> 結合多模型 AI 代理、文獻分析、數據科學與自主規劃的下一代研究工具
+> **🚀 v3.1 重大升級：從「AI工具鏈」蛻變為「自主AI研究團隊」**  
+> 引入智能審稿迴圈、版本控制、失敗保護，實現真正的「審稿會」模式
 
-## 🌟 革命性特點
+---
 
-### 🚀 **自主混合智能**
+## ⚡ 快速開始 - 一鍵安裝
+
+### 📋 系統需求
+- **Python 3.9+** (推薦 3.10+)
+- **4GB+ RAM** (推薦 8GB)
+- **2GB+ 硬碟空間** (用於依賴套件)
+- **穩定網路連接** (用於 API 調用)
+
+### 🚀 標準化安裝流程
+
+```bash
+# 1. 克隆專案
+git clone https://github.com/your-username/veritas-ai-researcher.git
+cd veritas-ai-researcher
+
+# 2. 創建標準化虛擬環境
+python -m venv .venv
+
+# 3. 啟動虛擬環境
+# Windows:
+.venv\Scripts\activate
+# Unix/Mac:
+source .venv/bin/activate
+
+# 4. 一鍵安裝所有依賴 (包含關鍵的 statsmodels)
+pip install -r requirements.txt
+
+# 5. 設置 API Keys
+python setup_api_keys.py
+
+# 6. 立即運行！
+python main.py
+```
+
+### 🔧 快速驗證安裝
+
+```bash
+# 測試核心依賴
+python -c "import pandas, statsmodels, crewai, langgraph; print('✅ 所有依賴安裝成功')"
+
+# 測試完整系統
+python test_feedback_system.py
+```
+
+---
+
+## 🌟 v3.1 革命性升級
+
+### 🔄 **智能審稿迴圈系統** 🆕
+- **真正的審稿會模式**：寫作 → 審核 → 修訂 → 再審核的閉環反饋
+- **1-10分評分系統**：客觀量化每次審核的品質提升
+- **智能決策機制**：ACCEPT/REVISE/REJECT 的動態判斷
+- **修訂優先級**：HIGH/MEDIUM/LOW 的精準改進指導
+
+### 📁 **自動版本控制** 🆕
+- **全程版本追蹤**：每次審核、修訂都自動保存獨立版本
+- **詳細變更記錄**：時間戳、評分、字數變化一目了然
+- **視覺演進展示**：完美的宣傳影片素材
+- **防丟失機制**：即使意外中斷也能恢復到任何版本
+
+### ⚖️ **失敗保護與最終裁決** 🆕
+- **智能保護機制**：防止無限修訂迴圈
+- **多層決策者**：AI審核員、系統保護、人工介入
+- **優雅降級**：即使品質不完美也能完成流程
+- **透明化記錄**：每個決策都有完整的可追溯記錄
+
+### 🚀 **自主混合智能** (持續優化)
 - **雙模態研究**：同時進行文獻回顧和數據分析
 - **智能路由**：專案經理代理自主決策最佳執行策略
 - **並行處理**：文獻搜集與數據分析同步執行，效率倍增

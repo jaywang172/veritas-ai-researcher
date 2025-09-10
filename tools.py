@@ -52,9 +52,12 @@ def execute_python_code(python_code: str) -> str:
             f.write(python_code)
         
         # 確定 Python 解釋器路徑
-        # 優先使用虛擬環境中的 Python
+        # 優先使用虛擬環境中的 Python（Windows 和 Unix 兼容）
         if 'VIRTUAL_ENV' in os.environ:
-            python_exec = os.path.join(os.environ['VIRTUAL_ENV'], 'bin', 'python')
+            if os.name == 'nt':  # Windows
+                python_exec = os.path.join(os.environ['VIRTUAL_ENV'], 'Scripts', 'python.exe')
+            else:  # Unix/Linux/macOS
+                python_exec = os.path.join(os.environ['VIRTUAL_ENV'], 'bin', 'python')
         elif hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
             # 在虛擬環境中
             python_exec = sys.executable
@@ -62,13 +65,16 @@ def execute_python_code(python_code: str) -> str:
             # 使用當前 Python
             python_exec = sys.executable
         
+        # 獲取專案根目錄（確保能訪問數據文件）
+        project_root = Path(__file__).parent.absolute()
+        
         # 執行代碼
         result = subprocess.run(
             [python_exec, str(script_path)],
             capture_output=True,
             text=True,
             timeout=300,  # 5分鐘超時
-            cwd=os.getcwd()  # 使用當前工作目錄，確保能訪問數據文件
+            cwd=str(project_root)  # 使用專案根目錄，確保能訪問數據文件
         )
         
         # 清理臨時文件

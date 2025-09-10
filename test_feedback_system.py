@@ -17,12 +17,12 @@ load_dotenv()
 def test_feedback_system():
     """測試動態協作反饋機制"""
     
-    print("🧪 動態協作反饋機制測試")
+    print("動態協作反饋機制測試")
     print("=" * 60)
     
     # 測試研究目標：使用 NVDA 財務數據
-    research_goal = "基於 NVDA_financial_data.csv 財務數據，分析 NVIDIA 公司在 AI 浪潮中的財務表現和估值變化趨勢"
-    data_file_path = "NVDA_financial_data.csv"
+    research_goal = "基於sales_data.csv提供的五年期詳細財報，深度剖析NVIDIA商業模式的演變。請識別其核心增長引擎的轉變過程，對比數據中心與遊戲業務的消長趨勢，並結合市場估值變化，生成一份關於NVIDIA如何轉型為全球AI領導者的綜合戰略分析報告。"
+    data_file_path = "sales_data.csv"
     
     print(f"📋 測試研究目標：{research_goal}")
     print(f"📊 數據檔案：{data_file_path}")
