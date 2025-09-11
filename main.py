@@ -54,7 +54,7 @@ def main():
         print(f"資料檔案：{data_file_path}")
     
     try:
-        # 🆕 初始化增強的研究狀態 (v3.1)
+        # 初始化增強的研究狀態 (v3.1)
         initial_state = ResearchState(
             # 基本輸入
             research_goal=research_goal,
@@ -72,19 +72,19 @@ def main():
             final_paper_content=None,
             complete_paper_content=None,
             
-            # 🆕 版本控制與歷史追蹤
+            # 版本控制與歷史追蹤
             version_history=[],
             current_version=0,
             auto_save_enabled=True,  # 啟用自動版本保存
             
-            # 🆕 智能品質審核系統
+            # 智能品質審核系統
             review_decision=None,
             review_feedback=None,
             review_score=None,
             review_priority=None,
             specific_issues=[],
             
-            # 🆕 修訂迴圈控制
+            # 修訂迴圈控制
             revision_count=0,
             max_revisions=3,  # 最多允許3次修訂
             revision_history=[],
@@ -92,7 +92,7 @@ def main():
             is_in_revision_loop=False,
             last_revision_timestamp=None,
             
-            # 🆕 失敗保護與最終裁決
+            # 失敗保護與最終裁決
             force_accept_reason=None,
             workflow_completion_status="IN_PROGRESS",
             final_decision_maker=None,
@@ -133,7 +133,7 @@ def main():
                 research_type = final_state['project_plan'].get('research_type', 'UNKNOWN')
                 print(f"研究類型：{research_type}")
             
-            # 🆕 顯示增強的品質審核和版本控制信息
+            # 顯示增強的品質審核和版本控制信息
             revision_count = final_state.get('revision_count', 0)
             version_count = len(final_state.get('version_history', []))
             completion_status = final_state.get('workflow_completion_status', 'UNKNOWN')
@@ -145,7 +145,7 @@ def main():
             # 顯示審稿迴圈詳情
             revision_history = final_state.get('revision_history', [])
             if revision_history:
-                print("🔄 智能審稿迴圈歷程：")
+                print("智能審稿迴圈歷程：")
                 for i, record in enumerate(revision_history, 1):
                     decision = record.get('decision', 'UNKNOWN')
                     score = record.get('quality_score', 'N/A')
@@ -156,7 +156,7 @@ def main():
             # 顯示版本控制成果
             version_history = final_state.get('version_history', [])
             if version_history and len(version_history) > 1:
-                print(f"📁 版本演進追蹤：")
+                print(f"版本演進追蹤：")
                 latest_version = version_history[-1]
                 print(f"  最新版本：v{latest_version.get('version', 0)} ({latest_version.get('type', 'unknown')})")
                 print(f"  字數變化：{version_history[0].get('word_count', 0)} → {latest_version.get('word_count', 0)} 字")
@@ -164,11 +164,11 @@ def main():
             # 顯示失敗保護機制
             force_accept_reason = final_state.get('force_accept_reason')
             if force_accept_reason:
-                print(f"⚖️ 最終裁決：{force_accept_reason}")
+                print(f"終裁決：{force_accept_reason}")
                 
             final_decision_maker = final_state.get('final_decision_maker')
             if final_decision_maker:
-                print(f"🎯 最終決策者：{final_decision_maker}")
+                print(f"最終決策者：{final_decision_maker}")
             
             if final_state.get('errors'):
                 print(f"過程中遇到 {len(final_state['errors'])} 個警告")
