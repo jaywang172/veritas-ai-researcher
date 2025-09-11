@@ -92,7 +92,7 @@ def format_revision_history_summary(state: 'ResearchState') -> str:
     if not revision_history:
         return "無修訂歷史"
     
-    summary = "## 🔄 修訂歷史摘要\n\n"
+    summary = "## 修訂歷史摘要\n\n"
     for i, record in enumerate(revision_history, 1):
         decision = record.get('decision', 'UNKNOWN')
         score = record.get('quality_score', 'N/A')
@@ -339,7 +339,7 @@ def data_analysis_node(state: ResearchState) -> ResearchState:
     """
     數據分析節點：執行本地數據分析
     """
-    print("\n📊 === 數據分析階段 ===")
+    print("\n=== 數據分析階段 ===")
     
     if not state.get('data_file_path'):
         print("無數據檔案，跳過數據分析")
@@ -399,7 +399,7 @@ def integration_node(state: ResearchState) -> ResearchState:
     """
     整合節點：結合文獻和數據分析結果，生成統一大綱
     """
-    print("\n🔄 === 整合與規劃階段 ===")
+    print("\n=== 整合與規劃階段 ===")
     
     try:
         # 整合所有論點
@@ -926,12 +926,12 @@ def revision_node(state: ResearchState) -> ResearchState:
     review_priority = state.get('review_priority', 'MEDIUM')
     specific_issues = state.get('specific_issues', [])
     
-    print(f"📝 執行第 {revision_count} 次修訂")
-    print(f"📊 當前評分：{review_score}/10")
-    print(f"⚡ 修訂優先級：{review_priority}")
-    print(f"🎯 修訂依據：{feedback[:150]}...")
+    print(f"執行第 {revision_count} 次修訂")
+    print(f"當前評分：{review_score}/10")
+    print(f"修訂優先級：{review_priority}")
+    print(f"修訂依據：{feedback[:150]}...")
     if specific_issues:
-        print(f"🔍 重點問題：{', '.join(specific_issues[:3])}...")
+        print(f"重點問題：{', '.join(specific_issues[:3])}...")
     
     # 🆕 版本控制：修訂前保存
     save_version_to_history(
@@ -951,7 +951,7 @@ def revision_node(state: ResearchState) -> ResearchState:
         ])
         
         if needs_data_reanalysis and state.get('data_file_path'):
-            print("🔬 檢測到需要重新進行數據分析")
+            print("檢測到需要重新進行數據分析")
             
             # 重新執行數據分析，帶上具體的改進要求
             enhanced_analysis_task = create_data_analysis_task(
@@ -997,11 +997,11 @@ def revision_node(state: ResearchState) -> ResearchState:
                 combined_points.extend(state['data_analysis_points'])
                 state['combined_points'] = combined_points
                 
-                print("✅ 數據分析修訂完成")
+                print("數據分析修訂完成")
         
         # 重新寫作，融入審核反饋
         if state.get('outline_data') and state.get('combined_points'):
-            print("✍️ 根據反饋重新寫作")
+            print("根據反饋重新寫作")
             
             outline_data = state['outline_data']
             all_points = state['combined_points']
@@ -1015,7 +1015,7 @@ def revision_node(state: ResearchState) -> ResearchState:
                 # 獲取該章節的論點
                 chapter_points = [all_points[i] for i in indices if i < len(all_points)]
                 
-                print(f"📝 修訂章節：{chapter_title}")
+                print(f"修訂章節：{chapter_title}")
                 
                 # 創建帶有反饋要求的寫作任務
                 revision_writing_task = create_writing_task(
@@ -1059,7 +1059,7 @@ def revision_node(state: ResearchState) -> ResearchState:
             revision_note = f"""
 
 ---
-## 📝 修訂記錄 (第 {revision_count} 次修訂)
+## 修訂記錄 (第 {revision_count} 次修訂)
 
 ### 本次修訂重點
 - **評分提升目標**：從 {review_score}/10 提升至 8+ 分
@@ -1089,8 +1089,8 @@ def revision_node(state: ResearchState) -> ResearchState:
                 f"第 {revision_count} 次修訂完成版本 (目標評分: 8+/10)"
             )
             
-            print("✅ 智能修訂完成")
-            print(f"📈 預期評分提升：{review_score}/10 → 8+/10")
+            print("智能修訂完成")
+            print(f"預期評分提升：{review_score}/10 → 8+/10")
         
         # 記錄修訂完成
         state['tasks_completed'].append(f'revision_{revision_count}')
@@ -1099,7 +1099,7 @@ def revision_node(state: ResearchState) -> ResearchState:
         state['last_revision_timestamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
     except Exception as e:
-        print(f"❌ 修訂過程發生錯誤：{e}")
+        print(f"修訂過程發生錯誤：{e}")
         state['errors'].append(f"修訂錯誤 (第{revision_count}次)：{str(e)}")
     
     return state
@@ -1121,25 +1121,25 @@ def route_after_quality_check(state: ResearchState) -> str:
     review_score = state.get('review_score', 5)
     is_force_accept = state.get('force_accept_reason') is not None
     
-    print(f"\n🧭 === 智能審稿路由決策 ===")
-    print(f"📋 審核決策：{decision}")
-    print(f"📊 當前評分：{review_score}/10")
-    print(f"🔄 修訂進度：{revision_count}/{max_revisions}")
+    print(f"\n=== 智能審稿路由決策 ===")
+    print(f"審核決策：{decision}")
+    print(f"當前評分：{review_score}/10")
+    print(f"修訂進度：{revision_count}/{max_revisions}")
     if is_force_accept:
-        print(f"⚖️ 最終裁決：{state.get('force_accept_reason', '')[:50]}...")
+        print(f"最終裁決：{state.get('force_accept_reason', '')[:50]}...")
     
     # 🆕 決策優先級：強制接受 > 品質通過 > 修訂迴圈 > 保護機制
     
     # 1. 最終裁決：強制接受
     if is_force_accept or decision == "FORCE_ACCEPT":
-        print("⚖️ 系統最終裁決 → 強制接受，進入編輯階段")
+        print("系統最終裁決 → 強制接受，進入編輯階段")
         state['is_in_revision_loop'] = False
         state['workflow_completion_status'] = "COMPLETED_FORCE_ACCEPT"
         return "editing"
     
     # 2. 品質審核通過
     if decision == "ACCEPT":
-        print("✅ 品質審核通過 → 進入最終編輯階段")
+        print("品質審核通過 → 進入最終編輯階段")
         state['is_in_revision_loop'] = False
         state['workflow_completion_status'] = "COMPLETED_ACCEPT"
         state['quality_gates_passed'].append(f"quality_check_passed_score_{review_score}")
@@ -1147,18 +1147,18 @@ def route_after_quality_check(state: ResearchState) -> str:
     
     # 3. 需要修訂且未達上限
     elif decision == "REVISE" and revision_count < max_revisions:
-        print(f"🔄 啟動修訂迴圈 → 第 {revision_count + 1} 次修訂")
-        print(f"🎯 修訂目標：提升評分至 8+ 分")
+        print(f"啟動修訂迴圈 → 第 {revision_count + 1} 次修訂")
+        print(f"修訂目標：提升評分至 8+ 分")
         state['is_in_revision_loop'] = True
         return "revision"
     
     # 4. 保護機制：達到修訂上限或被拒絕
     else:
         if decision == "REJECT":
-            print("❌ 品質審核拒絕 → 啟動保護機制，強制接受")
+            print("品質審核拒絕 → 啟動保護機制，強制接受")
             state['force_accept_reason'] = "品質審核拒絕，但啟動保護機制避免完全失敗"
         else:
-            print(f"⚠️ 達到最大修訂次數 ({max_revisions}) → 啟動保護機制，強制接受")
+            print(f"達到最大修訂次數 ({max_revisions}) → 啟動保護機制，強制接受")
             state['force_accept_reason'] = f"達到最大修訂次數 {max_revisions}，啟動保護機制"
         
         state['is_in_revision_loop'] = False
@@ -1180,7 +1180,7 @@ def decision_router(state: ResearchState) -> str:
     
     # 如果有嚴重錯誤，結束流程
     if errors and any('AuthenticationError' in error for error in errors):
-        print("❌ 檢測到認證錯誤，結束流程")
+        print("檢測到認證錯誤，結束流程")
         return "finished"
     
     # 如果還沒有專案計劃，開始文獻研究作為備用
@@ -1368,14 +1368,14 @@ def create_hybrid_workflow() -> StateGraph:
         revision_count = state.get('revision_count', 0)
         max_revisions = state.get('max_revisions', 3)
         
-        print(f"\n🔄 修訂完成路由：第 {revision_count} 次修訂已完成")
-        print("📋 強制返回品質審核節點，實現閉環反饋")
+        print(f"\n修訂完成路由：第 {revision_count} 次修訂已完成")
+        print("強制返回品質審核節點，實現閉環反饋")
         
         # 清除上一輪的審核標記，允許重新審核
         tasks_completed = state.get('tasks_completed', [])
         if 'quality_check' in tasks_completed:
             tasks_completed.remove('quality_check')
-            print("🔄 已清除上輪審核標記，準備重新審核")
+            print("已清除上輪審核標記，準備重新審核")
         
         # 修訂完成後，無論如何都要回到品質審核
         return "quality_check"
