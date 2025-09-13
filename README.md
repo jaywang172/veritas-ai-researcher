@@ -42,7 +42,7 @@ pip install -r requirements.txt
 python setup_api_keys.py
 
 # 6. 立即運行！
-python main.py
+python enhanced_main.py
 ```
 
 ###  快速驗證安裝
@@ -50,9 +50,6 @@ python main.py
 ```bash
 # 測試核心依賴
 python -c "import pandas, statsmodels, crewai, langgraph; print(' 所有依賴安裝成功')"
-
-# 測試完整系統
-python test_feedback_system.py
 ```
 
 ---

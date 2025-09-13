@@ -68,6 +68,10 @@ def execute_python_code(python_code: str) -> str:
         # 獲取專案根目錄（確保能訪問數據文件）
         project_root = Path(__file__).parent.absolute()
         
+        # 創建 results 目錄用於保存輸出文件
+        results_dir = project_root / "results"
+        results_dir.mkdir(exist_ok=True)
+        
         # 執行代碼
         result = subprocess.run(
             [python_exec, str(script_path)],
