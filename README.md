@@ -85,16 +85,10 @@ source venv/bin/activate
 
 ### 3. 安裝依賴套件
 
-您需要先生成 `requirements.txt` 檔案。
+您需要安裝 `requirements.txt` 檔案。
 
 ```bash
-pip install crewai crewai_tools python-dotenv langchain_openai langgraph
-```
-
-然後執行：
-
-```bash
-pip freeze > requirements.txt
+pip install -r requirements.txt
 ```
 
 ### 4. 設定 API Keys
