@@ -122,3 +122,8 @@ docker-compose.yml
 node_modules/
 .npm
 .yarn-integrity
+
+# --- Veritas v3.1 專案生成檔案 ---
+results/
+version_*.txt
+enhanced_research_*.txt

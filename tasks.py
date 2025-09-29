@@ -1,12 +1,17 @@
 from crewai import Task
-from agents import literature_scout, synthesizer, outline_planner, academic_writer, editor, citation_formatter, computational_scientist
+
+from agents import (academic_writer, citation_formatter,
+                    computational_scientist, editor, literature_scout,
+                    outline_planner, synthesizer)
+
 
 def create_research_task(research_topic: str) -> Task:
     return Task(
         description=f"根據研究主題「{research_topic}」，使用搜尋工具查找相關的學術文獻和研究資料...",
         expected_output="一個包含相關文獻來源的清單...",
-        agent=literature_scout
+        agent=literature_scout,
     )
+
 
 def create_summarize_task() -> Task:
     return Task(
@@ -42,6 +47,7 @@ def create_summarize_task() -> Task:
 - 不完整的URL""",
         agent=synthesizer,
     )
+
 
 def create_outline_task() -> Task:
     return Task(
@@ -84,12 +90,13 @@ def create_outline_task() -> Task:
 - Markdown標記
 - 額外的解釋文字
 - 無效的論點索引""",
-        agent=outline_planner
+        agent=outline_planner,
     )
+
 
 def create_writing_task(chapter_title: str, supporting_points: str) -> Task:
     return Task(
-        description=f'''當前需要撰寫的章節是："{chapter_title}"
+        description=f"""當前需要撰寫的章節是："{chapter_title}"
 
 支援論點如下（每個論點都包含 sentence 和 source 字段）：
 {supporting_points}
@@ -98,20 +105,21 @@ def create_writing_task(chapter_title: str, supporting_points: str) -> Task:
 1. 根據提供的論點撰寫流暢、連貫的學術段落
 2. 每當引用或使用任何論點時，必須在句末標註來源：(來源URL)
 3. 確保所有使用的資訊都有明確的來源標註
-4. 不要包含章節標題本身，只撰寫內容段落''',
-        expected_output='''一段或多段完整的學術段落，其中每個引用的資訊都在句末標註來源URL，格式如：
+4. 不要包含章節標題本身，只撰寫內容段落""",
+        expected_output="""一段或多段完整的學術段落，其中每個引用的資訊都在句末標註來源URL，格式如：
 "這是一個重要的研究發現 (https://example.com/source1)。另一項研究也支持這個觀點 (https://example.com/source2)。"
 
 **絕對不要**：
 - 忽略來源標註
 - 使用沒有提供來源的資訊
-- 包含章節標題''',
-        agent=academic_writer
+- 包含章節標題""",
+        agent=academic_writer,
     )
+
 
 def create_review_task() -> Task:
     return Task(
-        description='''這是論文的完整初稿：
+        description="""這是論文的完整初稿：
 
 {context}
 
@@ -126,21 +134,22 @@ def create_review_task() -> Task:
 - 在文章最開始添加 "## 摘要 (Abstract)" 部分
 - 保持所有現有的來源標註
 - 保持章節結構，但可以調整內容和過渡
-- 確保摘要簡潔且概括了論文的主要貢獻''',
-        expected_output='''一份經過專業編輯和潤色的完整論文文本，包含：
+- 確保摘要簡潔且概括了論文的主要貢獻""",
+        expected_output="""一份經過專業編輯和潤色的完整論文文本，包含：
 
 1. **摘要部分**：在文章開頭的專業摘要 (150-250字)
 2. **流暢內容**：所有章節內容經過潤色，邏輯清晰，過渡自然
 3. **統一風格**：全文術語和寫作風格保持一致
 4. **完整引用**：保留所有原有的來源標註
 
-輸出應該是可以直接發布的高品質學術文本，展現專業期刊的編輯水準。''',
-        agent=editor
+輸出應該是可以直接發布的高品質學術文本，展現專業期刊的編輯水準。""",
+        agent=editor,
     )
+
 
 def create_citation_task() -> Task:
     return Task(
-        description='''你是一位專業的學術引文格式化專家。你的唯一任務是從論文中提取URL並生成APA格式的參考文獻列表。
+        description="""你是一位專業的學術引文格式化專家。你的唯一任務是從論文中提取URL並生成APA格式的參考文獻列表。
 
 **輸入論文內容**：
 {context}
@@ -177,8 +186,8 @@ def create_citation_task() -> Task:
 - 不要說"我現在知道最終答案"
 - 不要輸出總結性語句
 - 不要包含任何非引文內容
-- 不要省略任何找到的URL''',
-        expected_output='''## References
+- 不要省略任何找到的URL""",
+        expected_output="""## References
 
 [按字母順序排列的APA格式參考文獻條目]
 
@@ -194,13 +203,14 @@ Zhang, M., & Liu, K. (2024). Machine learning applications. *Journal of AI Resea
 - 每個條目占一行，使用APA第7版格式
 - 按作者姓氏字母排序
 - 保持所有URL完整
-- 包含論文中的所有引用來源''',
-        agent=citation_formatter
+- 包含論文中的所有引用來源""",
+        agent=citation_formatter,
     )
+
 
 def create_data_analysis_task(data_file_path: str, analysis_goal: str) -> Task:
     return Task(
-        description=f'''你必須使用工具完成以下數據分析任務：
+        description=f"""你必須使用工具完成以下數據分析任務：
 
 **第一步：使用 FileReadTool 讀取數據**
 - 調用 FileReadTool，file_path 參數設為 "{data_file_path}"
@@ -218,7 +228,7 @@ def create_data_analysis_task(data_file_path: str, analysis_goal: str) -> Task:
 4. 生成圖表並保存為 PNG 文件
 5. 提供詳細的分析摘要
 
-**重要**：你必須實際使用 FileReadTool 和 CodeInterpreterTool，不要說找不到文件！''',
+**重要**：你必須實際使用 FileReadTool 和 CodeInterpreterTool，不要說找不到文件！""",
         expected_output='''一份完整的數據分析結果，包含：
 
 **數據概覽**：
@@ -241,5 +251,5 @@ def create_data_analysis_task(data_file_path: str, analysis_goal: str) -> Task:
 
 示例格式：
 "通過對數據的分析，我們發現了以下關鍵模式：[具體發現]。詳細的可視化結果已保存為 analysis_chart.png。建議進一步關注 [具體建議]。"''',
-        agent=computational_scientist
+        agent=computational_scientist,
     )

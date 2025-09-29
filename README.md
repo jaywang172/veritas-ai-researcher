@@ -19,40 +19,41 @@
 - **2GB+ 硬碟空間** (用於依賴套件)
 - **穩定網路連接** (用於 API 調用)
 
-###  標準化安裝流程
+###  標準化安裝與運行流程
 
 ```bash
 # 1. 克隆專案
 git clone https://github.com/your-username/veritas-ai-researcher.git
 cd veritas-ai-researcher
 
-# 2. 創建標準化虛擬環境
+# 2. 創建並啟動 Python 虛擬環境
 python -m venv .venv
+source .venv/bin/activate  # Unix/Mac
+# .venv\Scripts\activate  # Windows
 
-# 3. 啟動虛擬環境
-# Windows:
-.venv\Scripts\activate
-# Unix/Mac:
-source .venv/bin/activate
-
-# 4. 一鍵安裝所有依賴 (包含關鍵的 statsmodels)
+# 3. 安裝後端依賴
 pip install -r requirements.txt
 
-# 5. 設置 API Keys
+# 4. 設置 API Keys
 python setup_api_keys.py
 
-# 6. 立即運行！
-python main.py
+# 5. 編譯前端介面
+cd frontend
+npm install
+npm run build
+cd ..
+
+# 6. 啟動系統 (後端 + 前端)
+python api_server.py
 ```
+
+**然後，在您的瀏覽器中打開 http://localhost:8000 即可開始使用！**
 
 ###  快速驗證安裝
 
 ```bash
 # 測試核心依賴
 python -c "import pandas, statsmodels, crewai, langgraph; print(' 所有依賴安裝成功')"
-
-# 測試完整系統
-python test_feedback_system.py
 ```
 
 ---
@@ -124,70 +125,40 @@ graph TB
     K --> L[最終報告]
 ```
 
-###  **模組化設計**
+###  模組化設計
 ```
-veritas_prototype/
-├──  agents.py          # 8個專業AI代理定義
-├──  tasks.py           # 結構化任務模板
-├──  tools.py           # 工具集成和配置
-├──  config.py          # 多模型LLM配置管理
-├──  main.py            # 主程式入口
-├──  workflows/         # LangGraph工作流程
-│   ├── hybrid_workflow.py    # 混合智能主流程
-│   └── __init__.py
-├──  sales_data.csv     # 範例數據檔案
-├──  setup_api_keys.py  # 環境設置輔助
-├──  env_template.txt   # 環境變數模板
-└──  requirements.txt   # 相依套件
-```
-
----
-
-##  快速開始
-
-### 1. **環境準備**
-```bash
-# 克隆專案
-git clone https://github.com/your-username/veritas-v3.git
-cd veritas-v3
-
-# 建立虛擬環境
-python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # macOS/Linux
-
-# 安裝依賴
-pip install -r requirements.txt
+veritas-ai-researcher/
+├── frontend/            # React 前端應用
+│   ├── src/
+│   └── public/
+├── agents.py            # 8個專業AI代理定義
+├── api_server.py        # FastAPI 後端與主程式入口
+├── tasks.py             # 結構化任務模板
+├── tools.py             # 工具集成和配置
+├── config.py            # 多模型LLM配置管理
+├── workflows/           # LangGraph工作流程
+│   ├── hybrid_workflow.py
+│   └── ...
+├── uploads/             # 使用者上傳的資料檔案
+├── results/             # 研究成果存檔
+├── requirements.txt     # Python 後端依賴
+└── ...
 ```
 
-### 2. **API Keys 設置**
-```bash
-# 方法一：互動式設置（推薦）
-python setup_api_keys.py
+## 🖥️ 全新的 Web 操作介面
 
-# 方法二：手動設置
-copy env_template.txt .env
-# 編輯 .env 檔案，設置真實的 API Keys
-```
+Veritas v3.1 引入了基於 React 和 Bootstrap 5 的現代化 Web UI，將複雜的研究流程轉化為直觀、流暢的點擊操作。
 
-### 3. **執行混合智能研究**
-```bash
-python main.py
-```
+**[在此處插入您的前端介面截圖，展示其專業外觀]**
 
-### 4. **系統使用範例**
-```
- 請描述您的研究目標: 
-分析人工智能對教育的影響，並基於最新調查數據提供政策建議
+### 使用指南
 
-📁 是否有資料檔案需要分析？
-education_survey.csv
-
- 系統自動執行：
- 並行文獻搜尋 +  數據分析
- 智能整合證據
- 生成完整學術報告
-```
+1.  **啟動系統**：按照上文的「標準化安裝與運行流程」啟動後端伺服器。
+2.  **打開介面**：在瀏覽器中打開 `http://localhost:8000`。
+3.  **設定研究**：在「Configure Research」面板中，輸入您的研究目標，選擇工作流，並可選地的上傳一份資料檔案。
+4.  **開始研究**：點擊「Start Research」按鈕。
+5.  **即時追蹤**：在「Live Progress」面板中，即時查看 AI 團隊的彩色工作日誌和進度條。
+6.  **獲取成果**：研究完成後，「Final Results」面板將會出現，展示完整的報告和可供下載的產出檔案。
 
 ---
 

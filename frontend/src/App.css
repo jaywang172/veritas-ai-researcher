@@ -1,0 +1,58 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.log-viewer {
+  height: 400px;
+  background-color: #212529;
+  color: #f8f9fa;
+  font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 0.9rem;
+  overflow-y: scroll;
+  padding: 0.5rem 1rem; /* Adjusted padding */
+  border-radius: 0.25rem;
+}
+
+.log-entry {
+  white-space: pre-wrap;
+  word-break: break-word;
+  /* Add vertical padding and a bottom border for separation */
+  padding: 0.75rem 0;
+  line-height: 1.5;
+}
+
+.log-entry:not(:last-child) {
+    border-bottom: 1px solid #343a40;
+}
+
+.log-entry span {
+    vertical-align: top;
+}
+
+.log-entry.level-error {
+  color: #dc3545;
+}
+
+.log-entry.level-warning {
+  color: #ffc107;
+}
+
+.log-entry.level-success {
+  color: #198754;
+}
+
+.log-entry.level-info {
+  color: #adb5bd;
+}
+
+.result-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background-color: #e9ecef;
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
+.card-header-icon {
+  margin-right: 0.5rem;
+}
