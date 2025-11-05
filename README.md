@@ -1,210 +1,210 @@
-# Veritas: A Multi-Agent Framework for Automated Academic Research
+# Veritas：基於多代理架構的自動化學術研究框架
 
-## Abstract
+## 摘要
 
-This paper presents Veritas, an autonomous multi-agent system designed to facilitate comprehensive academic research through the orchestration of specialized artificial intelligence agents. The system leverages Large Language Models (LLMs) and graph-based workflow engines to automate the entire research pipeline, from literature review to manuscript preparation. Built upon the CrewAI multi-agent framework and LangGraph workflow engine, Veritas implements a collaborative architecture where eight specialized agents perform distinct research tasks: literature collection, synthesis, outline planning, academic writing, editing, citation formatting, computational analysis, and project management. The system demonstrates the feasibility of automated research assistance while maintaining academic rigor and citation integrity. Our implementation supports multiple research modalities including pure literature review, data-driven analysis, and hybrid methodologies. Experimental validation shows that Veritas can reduce research preparation time significantly while producing academically sound outputs with proper source attribution.
+本研究提出 Veritas 系統，一個利用專業化人工智慧代理協同運作的自主式多代理系統，旨在促進全面性學術研究的進行。該系統運用大型語言模型（Large Language Models, LLMs）與圖形化工作流引擎，自動化整個研究流程，涵蓋文獻回顧至手稿撰寫。建構於 CrewAI 多代理框架與 LangGraph 工作流引擎之上，Veritas 實作了協作式架構，由八個專業化代理執行不同研究任務：文獻蒐集、綜合分析、大綱規劃、學術寫作、編輯審閱、引文格式化、計算分析與專案管理。系統展現了自動化研究輔助的可行性，同時維持學術嚴謹性與引用完整性。本實作支援多種研究模式，包括純文獻回顧、數據驅動分析與混合方法論。實驗驗證顯示，Veritas 能顯著減少研究準備時間，同時產出具學術水準且適當註明來源的成果。
 
-**Keywords**: Multi-Agent Systems, Large Language Models, Automated Research, Academic Writing, Knowledge Synthesis, CrewAI, LangGraph
-
----
-
-## 1. Introduction
-
-### 1.1 Research Problem
-
-The exponential growth of academic literature and data sources presents significant challenges for researchers attempting to conduct comprehensive literature reviews and data analyses. Traditional research methodologies require substantial time investment for literature collection, synthesis, analysis, and manuscript preparation. This work introduces an automated system that addresses these challenges through intelligent agent orchestration.
-
-### 1.2 System Overview
-
-Veritas (Version 3.1) is a sophisticated research automation platform that implements a multi-agent architecture for academic research assistance. The system employs eight specialized AI agents, each optimized for specific research tasks, coordinated through workflow engines that ensure proper task sequencing and information flow.
-
-### 1.3 Contributions
-
-The primary contributions of this work include:
-
-1. **Multi-Agent Architecture**: A novel eight-agent system with specialized roles and optimized LLM configurations for each task
-2. **Hybrid Research Capability**: Support for pure literature review, computational data analysis, and combined methodologies
-3. **Quality Assurance Framework**: Automated review cycles with quantitative scoring mechanisms
-4. **Version Control System**: Complete versioning of research artifacts throughout the workflow
-5. **Citation Integrity**: Automated source tracking and APA 7th edition citation formatting
+**關鍵詞**：多代理系統、大型語言模型、自動化研究、學術寫作、知識綜合、CrewAI、LangGraph
 
 ---
 
-## 2. System Architecture
+## 1. 緒論
 
-### 2.1 Multi-Agent Framework
+### 1.1 研究問題
 
-The system implements eight specialized agents built on the CrewAI framework:
+學術文獻與數據來源的指數級成長，對試圖進行全面性文獻回顧與數據分析的研究人員構成重大挑戰。傳統研究方法論需要大量時間投資於文獻蒐集、綜合、分析與手稿準備。本研究引入一個自動化系統，透過智能代理協調來解決這些挑戰。
 
-**Agent 1: Literature Scout**
-- **Role**: Literature collection and web-based research
-- **LLM Configuration**: GPT-4o-mini (cost-optimized for search tasks)
-- **Tools**: Tavily Search API for academic resource discovery
-- **Objective**: Identify and retrieve relevant academic sources based on research queries
+### 1.2 系統概述
 
-**Agent 2: Research Analyst (Synthesizer)**
-- **Role**: Extract key arguments and evidence from raw research data
-- **LLM Configuration**: GPT-4.1-mini (balanced performance)
-- **Output Format**: Structured JSON with sentence-source pairs
-- **Objective**: Transform unstructured research data into structured argument lists
+Veritas（版本 3.1）是一個先進的研究自動化平台，實作了多代理架構以協助學術研究。系統採用八個專業化 AI 代理，每個針對特定研究任務進行最佳化，透過工作流引擎協調，確保適當的任務排序與資訊流動。
 
-**Agent 3: Outline Planner**
-- **Role**: Logical structure design and chapter organization
-- **LLM Configuration**: O3-mini (advanced reasoning capabilities)
-- **Output Format**: Hierarchical JSON outline with chapter assignments
-- **Objective**: Create coherent argumentative structures from extracted points
+### 1.3 研究貢獻
 
-**Agent 4: Academic Writer**
-- **Role**: Scholarly manuscript composition
-- **LLM Configuration**: GPT-5-mini (advanced creative capabilities)
-- **Citation Protocol**: Inline URL citation (source URL) format
-- **Objective**: Generate academically rigorous prose with proper attribution
+本研究的主要貢獻包括：
 
-**Agent 5: Editor**
-- **Role**: Content refinement and coherence verification
-- **LLM Configuration**: GPT-5 (premium language proficiency)
-- **Tasks**: Abstract generation, transition enhancement, style unification
-- **Objective**: Ensure manuscript quality and logical flow
+1. **多代理架構**：創新的八代理系統，具備專業化角色與針對各任務最佳化的 LLM 配置
+2. **混合研究能力**：支援純文獻回顧、計算數據分析與結合方法論
+3. **品質保證框架**：具量化評分機制的自動化審閱循環
+4. **版本控制系統**：工作流程中研究產出物的完整版本控制
+5. **引用完整性**：自動化來源追蹤與 APA 第七版引文格式化
 
-**Agent 6: Citation Formatter**
-- **Role**: Reference list generation in APA 7th edition format
-- **LLM Configuration**: GPT-4.1-mini (precise formatting capabilities)
-- **Tools**: Tavily Search for metadata extraction
-- **Objective**: Create properly formatted bibliographic entries
+---
 
-**Agent 7: Computational Scientist**
-- **Role**: Data analysis and visualization
-- **LLM Configuration**: GPT-4.1 (reliable tool usage)
-- **Tools**: FileReadTool, LocalCodeExecutor
-- **Libraries**: pandas, numpy, matplotlib, seaborn, scikit-learn
-- **Objective**: Perform statistical analysis and generate publication-quality visualizations
+## 2. 系統架構
 
-**Agent 8: Project Manager**
-- **Role**: Strategic planning and workflow coordination
-- **LLM Configuration**: O3 (premium strategic reasoning)
-- **Delegation**: Enabled for task distribution
-- **Objective**: Optimize research strategy and coordinate agent activities
+### 2.1 多代理框架
 
-### 2.2 LLM Configuration Strategy
+系統實作八個建構於 CrewAI 框架上的專業化代理：
 
-The system employs a cost-performance optimization strategy through differentiated model selection:
+**代理一：文獻蒐集專家**
+- **角色**：文獻蒐集與網路基礎研究
+- **LLM 配置**：GPT-4o-mini（針對搜尋任務進行成本最佳化）
+- **工具**：Tavily 搜尋 API 用於學術資源探索
+- **目標**：根據研究查詢識別並檢索相關學術來源
 
-| Agent Type | Model | Tier | Cost/1K tokens | Rationale |
-|-----------|-------|------|---------------|-----------|
-| Literature Scout | gpt-4o-mini | Basic | $0.26 | High-volume search tasks |
-| Research Analyst | gpt-4.1-mini | Standard | $0.50 | Structured extraction |
-| Outline Planner | o3-mini | Advanced | $1.93 | Complex reasoning required |
-| Academic Writer | gpt-5-mini | Advanced | $0.63 | Creative composition |
-| Editor | gpt-5 | Premium | $2.63 | Language expertise critical |
-| Citation Formatter | gpt-4.1-mini | Standard | $0.50 | Precision formatting |
-| Computational Scientist | gpt-4.1 | Premium | $2.50 | Reliable code generation |
-| Project Manager | o3 | Premium | $3.00 | Strategic decision-making |
+**代理二：研究分析師（綜合者）**
+- **角色**：從原始研究數據中提取關鍵論點與證據
+- **LLM 配置**：GPT-4.1-mini（平衡效能）
+- **輸出格式**：結構化 JSON，包含論述-來源配對
+- **目標**：將非結構化研究數據轉換為結構化論點清單
 
-### 2.3 Workflow Engine Architecture
+**代理三：大綱規劃師**
+- **角色**：邏輯結構設計與章節組織
+- **LLM 配置**：O3-mini（進階推理能力）
+- **輸出格式**：階層式 JSON 大綱，含章節分配
+- **目標**：從提取的論點創建連貫的論證結構
 
-The system utilizes LangGraph, a state machine-based workflow engine, to orchestrate agent interactions:
+**代理四：學術寫作專家**
+- **角色**：學術手稿撰寫
+- **LLM 配置**：GPT-5-mini（進階創作能力）
+- **引用協定**：內文 URL 引用格式（來源 URL）
+- **目標**：生成具學術嚴謹性且適當註明出處的文稿
+
+**代理五：編輯審閱師**
+- **角色**：內容精煉與連貫性驗證
+- **LLM 配置**：GPT-5（頂級語言精通度）
+- **任務**：摘要生成、轉折增強、風格統一
+- **目標**：確保手稿品質與邏輯流暢
+
+**代理六：引文格式化師**
+- **角色**：以 APA 第七版格式生成參考文獻清單
+- **LLM 配置**：GPT-4.1-mini（精確格式化能力）
+- **工具**：Tavily 搜尋用於元數據提取
+- **目標**：創建格式正確的書目條目
+
+**代理七：計算科學家**
+- **角色**：數據分析與視覺化
+- **LLM 配置**：GPT-4.1（可靠的工具使用）
+- **工具**：FileReadTool、LocalCodeExecutor
+- **函式庫**：pandas、numpy、matplotlib、seaborn、scikit-learn
+- **目標**：執行統計分析並生成出版級視覺化圖表
+
+**代理八：專案經理**
+- **角色**：策略規劃與工作流協調
+- **LLM 配置**：O3（頂級策略推理）
+- **委派**：啟用任務分配功能
+- **目標**：最佳化研究策略並協調代理活動
+
+### 2.2 LLM 配置策略
+
+系統透過差異化模型選擇採用成本效能最佳化策略：
+
+| 代理類型 | 模型 | 層級 | 成本/千個詞元 | 理由 |
+|---------|------|------|--------------|------|
+| 文獻蒐集專家 | gpt-4o-mini | 基礎 | $0.26 | 高流量搜尋任務 |
+| 研究分析師 | gpt-4.1-mini | 標準 | $0.50 | 結構化提取 |
+| 大綱規劃師 | o3-mini | 進階 | $1.93 | 需要複雜推理 |
+| 學術寫作專家 | gpt-5-mini | 進階 | $0.63 | 創意寫作 |
+| 編輯審閱師 | gpt-5 | 頂級 | $2.63 | 語言專業度關鍵 |
+| 引文格式化師 | gpt-4.1-mini | 標準 | $0.50 | 精確格式化 |
+| 計算科學家 | gpt-4.1 | 頂級 | $2.50 | 可靠的程式碼生成 |
+| 專案經理 | o3 | 頂級 | $3.00 | 策略決策 |
+
+### 2.3 工作流引擎架構
+
+系統利用 LangGraph（基於狀態機的工作流引擎）來協調代理互動：
 
 ```
 graph TB
-    A[User Input] --> B[Project Manager]
-    B --> C{Research Type Detection}
-    C -->|Literature| D[Literature Scout]
-    C -->|Data Analysis| E[Computational Scientist]
-    C -->|Hybrid| F[Parallel Execution]
+    A[使用者輸入] --> B[專案經理]
+    B --> C{研究類型偵測}
+    C -->|文獻型| D[文獻蒐集專家]
+    C -->|數據分析| E[計算科學家]
+    C -->|混合型| F[平行執行]
     F --> D
     F --> E
-    D --> G[Research Analyst]
+    D --> G[研究分析師]
     E --> G
-    G --> H[Outline Planner]
-    H --> I[Academic Writer]
-    I --> J[Editor Review Loop]
-    J -->|Score < 7| I
-    J -->|Score >= 7| K[Citation Formatter]
-    K --> L[Final Document]
+    G --> H[大綱規劃師]
+    H --> I[學術寫作專家]
+    I --> J[編輯審閱循環]
+    J -->|分數 < 7| I
+    J -->|分數 >= 7| K[引文格式化師]
+    K --> L[最終文件]
 ```
 
-### 2.4 Quality Assurance System
+### 2.4 品質保證系統
 
-The system implements an iterative review mechanism:
+系統實作迭代式審閱機制：
 
-1. **Initial Draft Generation**: Academic Writer produces chapter content
-2. **Quality Scoring**: Editor assigns 1-10 quality score
-3. **Decision Logic**:
-   - ACCEPT: Score >= 7, proceed to next stage
-   - REVISE: Score 4-6, return for revision with specific feedback
-   - REJECT: Score < 4, fundamental restructuring required
-4. **Revision Limits**: Maximum 2 revision cycles to prevent infinite loops
-5. **Version Tracking**: All versions archived with timestamps and scores
+1. **初稿生成**：學術寫作專家產出章節內容
+2. **品質評分**：編輯審閱師指派 1-10 品質分數
+3. **決策邏輯**：
+   - 接受（ACCEPT）：分數 >= 7，進行下一階段
+   - 修訂（REVISE）：分數 4-6，回傳修訂並提供具體回饋
+   - 拒絕（REJECT）：分數 < 4，需根本性重組
+4. **修訂限制**：最多 2 次修訂循環以防止無限迴圈
+5. **版本追蹤**：所有版本均存檔，含時間戳記與分數
 
 ---
 
-## 3. System Implementation
+## 3. 系統實作
 
-### 3.1 Technical Stack
+### 3.1 技術堆疊
 
-**Core Dependencies**:
+**核心相依套件**：
 - Python 3.10+
-- CrewAI >= 0.177.0 (Multi-agent orchestration)
-- LangGraph >= 0.2.0 (Workflow engine)
-- LangChain-OpenAI >= 0.1.0 (LLM integration)
-- FastAPI >= 0.104.0 (Web API framework)
-- Uvicorn >= 0.24.0 (ASGI server)
+- CrewAI >= 0.177.0（多代理協調）
+- LangGraph >= 0.2.0（工作流引擎）
+- LangChain-OpenAI >= 0.1.0（LLM 整合）
+- FastAPI >= 0.104.0（Web API 框架）
+- Uvicorn >= 0.24.0（ASGI 伺服器）
 
-**Data Science Libraries**:
-- pandas >= 2.3.0 (Data manipulation)
-- numpy >= 2.3.0 (Numerical computing)
-- scipy >= 1.13.0 (Scientific computing)
-- statsmodels >= 0.14.0 (Statistical modeling)
-- matplotlib >= 3.8.0 (Visualization)
-- seaborn >= 0.13.0 (Statistical graphics)
-- scikit-learn >= 1.4.0 (Machine learning)
+**資料科學函式庫**：
+- pandas >= 2.3.0（資料操作）
+- numpy >= 2.3.0（數值計算）
+- scipy >= 1.13.0（科學計算）
+- statsmodels >= 0.14.0（統計建模）
+- matplotlib >= 3.8.0（視覺化）
+- seaborn >= 0.13.0（統計圖形）
+- scikit-learn >= 1.4.0（機器學習）
 
-**Search and Web Integration**:
-- tavily-python >= 0.3.0 (Academic search API)
-- requests >= 2.32.0 (HTTP client)
-- beautifulsoup4 >= 4.13.0 (Web scraping)
+**搜尋與網路整合**：
+- tavily-python >= 0.3.0（學術搜尋 API）
+- requests >= 2.32.0（HTTP 客戶端）
+- beautifulsoup4 >= 4.13.0（網頁擷取）
 
-### 3.2 Installation and Deployment
+### 3.2 安裝與部署
 
-**Prerequisites**:
-- Python 3.10 or higher
-- 8GB RAM minimum (16GB recommended)
-- 2GB available disk space
-- Stable internet connection for API access
+**先決條件**：
+- Python 3.10 或更高版本
+- 最低 8GB RAM（建議 16GB）
+- 2GB 可用磁碟空間
+- 穩定的網際網路連線以存取 API
 
-**Installation Procedure**:
+**安裝程序**：
 
 ```bash
-# Clone repository
+# 複製儲存庫
 git clone https://github.com/jaywang172/veritas-ai-researcher.git
 cd veritas-ai-researcher
 
-# Create virtual environment
+# 建立虛擬環境
 python -m venv .venv
 
-# Activate virtual environment
+# 啟動虛擬環境
 # Unix/Linux/macOS:
 source .venv/bin/activate
 # Windows:
 # .venv\Scripts\activate
 
-# Install dependencies
+# 安裝相依套件
 pip install -r requirements.txt
 
-# Configure API credentials
+# 配置 API 憑證
 python setup_api_keys.py
 ```
 
-**Environment Configuration**:
+**環境配置**：
 
-Create a `.env` file with required API keys:
+建立包含必要 API 金鑰的 `.env` 檔案：
 
 ```
-OPENAI_API_KEY=your_openai_api_key_here
-TAVILY_API_KEY=your_tavily_api_key_here
+OPENAI_API_KEY=您的_openai_api_金鑰
+TAVILY_API_KEY=您的_tavily_api_金鑰
 ```
 
-**Frontend Compilation** (Optional):
+**前端編譯**（選擇性）：
 
 ```bash
 cd frontend
@@ -213,147 +213,147 @@ npm run build
 cd ..
 ```
 
-**System Launch**:
+**系統啟動**：
 
 ```bash
-# Start web server with integrated frontend
+# 啟動整合前端的 Web 伺服器
 python api_server.py
 
-# Access web interface at: http://localhost:8000
-# API documentation at: http://localhost:8000/docs
+# 存取 Web 介面：http://localhost:8000
+# API 文件：http://localhost:8000/docs
 ```
 
-### 3.3 API Endpoints
+### 3.3 API 端點
 
-The system exposes a RESTful API for programmatic access:
+系統公開 RESTful API 供程式化存取：
 
-- **POST /api/execute**: Execute research workflow
-- **POST /api/upload**: Upload data files for analysis
-- **GET /api/status**: Query current execution status
-- **GET /api/results/{session_id}**: Retrieve research outputs
-- **WebSocket /ws**: Real-time progress updates
-
----
-
-## 4. Research Workflows
-
-### 4.1 Simple Workflow
-
-Sequential execution for literature-based research:
-
-1. Literature collection via web search
-2. Argument extraction and structuring
-3. Outline generation
-4. Chapter-by-chapter composition
-5. Editorial review and refinement
-6. Citation formatting
-
-### 4.2 Enhanced Workflow
-
-Includes quality assurance mechanisms:
-
-1. Execute Simple Workflow
-2. Automated review with scoring (1-10 scale)
-3. Conditional revision based on quality threshold
-4. Version tracking for all iterations
-5. Final acceptance or graceful degradation
-
-### 4.3 Domain-Adaptive Workflow
-
-Specialized processing for different academic domains:
-
-**Supported Domains**:
-- Computer Science: Emphasis on algorithmic analysis and implementation
-- Business: Focus on case studies and market analysis
-- Healthcare: Integration of clinical data and evidence-based practices
-- Education: Pedagogical framework analysis
-- General: Balanced multi-disciplinary approach
-
-### 4.4 Hybrid Workflow
-
-Combines literature review with computational data analysis:
-
-1. Parallel execution of literature collection and data analysis
-2. Synthesis of qualitative and quantitative findings
-3. Integrated reporting with visualizations
-4. Cross-validation of literature claims with empirical data
+- **POST /api/execute**：執行研究工作流
+- **POST /api/upload**：上傳分析用資料檔案
+- **GET /api/status**：查詢目前執行狀態
+- **GET /api/results/{session_id}**：檢索研究輸出
+- **WebSocket /ws**：即時進度更新
 
 ---
 
-## 5. Use Cases and Applications
+## 4. 研究工作流
 
-### 5.1 Academic Literature Review
+### 4.1 簡易工作流
 
-**Input**: Research topic (e.g., "Machine learning applications in climate science")
+針對文獻基礎研究的循序執行：
 
-**Process**:
-- Literature Scout collects recent publications and review articles
-- Research Analyst extracts key findings and methodologies
-- Outline Planner structures content by themes (algorithms, datasets, results)
-- Academic Writer composes coherent narrative
-- Citation Formatter generates bibliography
+1. 透過網路搜尋進行文獻蒐集
+2. 論點提取與結構化
+3. 大綱生成
+4. 逐章撰寫
+5. 編輯審閱與精煉
+6. 引文格式化
 
-**Output**: Comprehensive literature review with 50+ cited sources
+### 4.2 增強工作流
 
-### 5.2 Data-Driven Research Report
+包含品質保證機制：
 
-**Input**: Dataset (CSV/Excel) + Analysis objective
+1. 執行簡易工作流
+2. 具評分功能的自動化審閱（1-10 量表）
+3. 基於品質門檻的條件式修訂
+4. 所有迭代的版本追蹤
+5. 最終接受或優雅降級
 
-**Process**:
-- Computational Scientist loads and explores data
-- Statistical analysis and hypothesis testing
-- Visualization generation (correlation matrices, distributions, trends)
-- Interpretation of findings in academic context
-- Integration with relevant literature
+### 4.3 領域適應工作流
 
-**Output**: Research report with embedded visualizations and statistical analysis
+針對不同學術領域的專業化處理：
 
-### 5.3 Hybrid Research Publication
+**支援領域**：
+- 資訊科學：強調演算法分析與實作
+- 商業管理：聚焦個案研究與市場分析
+- 醫療保健：整合臨床數據與實證實務
+- 教育學：教學法框架分析
+- 通用：平衡的跨領域方法
 
-**Input**: Research question + Dataset + Domain specification
+### 4.4 混合工作流
 
-**Process**:
-- Project Manager determines optimal strategy
-- Parallel execution of literature review and data analysis
-- Cross-referencing of empirical findings with theoretical frameworks
-- Comprehensive synthesis in domain-specific format
-- Quality assurance through automated review
+結合文獻回顧與計算數據分析：
 
-**Output**: Publication-ready manuscript with abstract, introduction, methods, results, discussion, and references
+1. 平行執行文獻蒐集與數據分析
+2. 質性與量化發現的綜合
+3. 含視覺化的整合報告
+4. 文獻主張與實證數據的交叉驗證
 
 ---
 
-## 6. Quality Assurance and Validation
+## 5. 使用案例與應用
 
-### 6.1 Citation Integrity
+### 5.1 學術文獻回顧
 
-All claims in generated text are linked to source URLs through inline citations. The Citation Formatter agent:
+**輸入**：研究主題（例：「氣候科學中的機器學習應用」）
 
-1. Extracts all URL references from the manuscript
-2. Retrieves metadata (author, title, publication date, publisher)
-3. Formats entries according to APA 7th edition standards
-4. Alphabetizes and presents in standard reference list format
+**流程**：
+- 文獻蒐集專家收集近期出版品與回顧文章
+- 研究分析師提取關鍵發現與方法論
+- 大綱規劃師依主題（演算法、資料集、結果）組織內容
+- 學術寫作專家撰寫連貫敘事
+- 引文格式化師生成參考書目
 
-### 6.2 Content Quality Metrics
+**輸出**：引用 50 筆以上來源的全面性文獻回顧
 
-The Editor agent evaluates drafts on multiple dimensions:
+### 5.2 數據驅動研究報告
 
-- **Coherence**: Logical flow between sections (Weight: 25%)
-- **Academic Rigor**: Appropriate terminology and argumentation (Weight: 25%)
-- **Completeness**: Coverage of key points from outline (Weight: 20%)
-- **Writing Quality**: Grammar, style, clarity (Weight: 20%)
-- **Citation Coverage**: Proper attribution of claims (Weight: 10%)
+**輸入**：資料集（CSV/Excel）+ 分析目標
 
-**Scoring Scale**:
-- 9-10: Excellent, publication-ready
-- 7-8: Good, minor revisions acceptable
-- 5-6: Adequate, requires substantive revision
-- 3-4: Poor, major restructuring needed
-- 1-2: Unacceptable, complete rewrite required
+**流程**：
+- 計算科學家載入與探索數據
+- 統計分析與假設檢定
+- 視覺化生成（相關矩陣、分布圖、趨勢圖）
+- 於學術脈絡中詮釋發現
+- 與相關文獻整合
 
-### 6.3 Version Control
+**輸出**：含嵌入式視覺化與統計分析的研究報告
 
-All workflow stages preserve historical versions:
+### 5.3 混合研究出版品
+
+**輸入**：研究問題 + 資料集 + 領域規格
+
+**流程**：
+- 專案經理決定最佳策略
+- 平行執行文獻回顧與數據分析
+- 實證發現與理論框架的交叉引用
+- 以領域特定格式進行全面性綜合
+- 透過自動化審閱進行品質保證
+
+**輸出**：可供發表的手稿，含摘要、緒論、方法、結果、討論與參考文獻
+
+---
+
+## 6. 品質保證與驗證
+
+### 6.1 引用完整性
+
+生成文本中的所有主張均透過內文引用連結至來源 URL。引文格式化師代理：
+
+1. 從手稿中提取所有 URL 參考
+2. 檢索元數據（作者、標題、出版日期、發行者）
+3. 依據 APA 第七版標準格式化條目
+4. 按字母排序並以標準參考文獻清單格式呈現
+
+### 6.2 內容品質指標
+
+編輯審閱師代理依多個面向評估草稿：
+
+- **連貫性**：章節間的邏輯流暢（權重：25%）
+- **學術嚴謹性**：適當的術語使用與論證（權重：25%）
+- **完整性**：大綱要點的涵蓋程度（權重：20%）
+- **寫作品質**：文法、風格、清晰度（權重：20%）
+- **引用涵蓋度**：主張的適當註明（權重：10%）
+
+**評分量表**：
+- 9-10：優秀，可供發表
+- 7-8：良好，接受小幅修訂
+- 5-6：適當，需實質修訂
+- 3-4：不佳，需重大重組
+- 1-2：不可接受，需完全重寫
+
+### 6.3 版本控制
+
+所有工作流階段保存歷史版本：
 
 ```
 results/session_20250105_143000/
@@ -366,136 +366,136 @@ results/session_20250105_143000/
 
 ---
 
-## 7. Performance Evaluation
+## 7. 效能評估
 
-### 7.1 Computational Efficiency
+### 7.1 計算效率
 
-**Average Execution Times** (Intel Xeon 16-core, 32GB RAM):
+**平均執行時間**（Intel Xeon 16核心、32GB RAM）：
 
-| Workflow Type | Duration | Agent Calls | API Cost |
-|--------------|----------|-------------|----------|
-| Simple (Literature) | 8-12 min | 25-30 | $0.50-0.80 |
-| Enhanced (with Review) | 15-20 min | 40-50 | $0.80-1.20 |
-| Data Analysis | 5-10 min | 15-20 | $0.30-0.60 |
-| Hybrid | 20-30 min | 50-70 | $1.20-2.00 |
+| 工作流類型 | 持續時間 | 代理呼叫次數 | API 成本 |
+|-----------|---------|------------|---------|
+| 簡易（文獻型） | 8-12 分鐘 | 25-30 | $0.50-0.80 |
+| 增強（含審閱） | 15-20 分鐘 | 40-50 | $0.80-1.20 |
+| 數據分析 | 5-10 分鐘 | 15-20 | $0.30-0.60 |
+| 混合 | 20-30 分鐘 | 50-70 | $1.20-2.00 |
 
-### 7.2 Output Quality Assessment
+### 7.2 輸出品質評估
 
-**Metrics** (based on 100 test research tasks):
+**指標**（基於 100 個測試研究任務）：
 
-- Literature Retrieval Accuracy: 95% relevant sources
-- Citation Completeness: 98% of claims properly attributed
-- APA Format Compliance: 97% correct formatting
-- Manuscript Coherence Score: 7.8/10 average
-- Data Analysis Correctness: 92% valid statistical interpretations
+- 文獻檢索準確度：95% 相關來源
+- 引用完整性：98% 主張適當註明
+- APA 格式符合度：97% 正確格式化
+- 手稿連貫性分數：平均 7.8/10
+- 數據分析正確性：92% 有效統計詮釋
 
-### 7.3 Cost Optimization
+### 7.3 成本最佳化
 
-**Model Selection Impact**:
+**模型選擇影響**：
 
-| Configuration | Cost/Report | Quality Score | Efficiency Ratio |
-|--------------|-------------|---------------|------------------|
-| Economy (all mini models) | $0.35 | 6.5/10 | 18.6 |
-| Balanced (mixed tiers) | $0.85 | 7.8/10 | 9.2 |
-| Premium (all flagship) | $2.40 | 8.3/10 | 3.5 |
+| 配置 | 成本/報告 | 品質分數 | 效率比 |
+|-----|---------|---------|--------|
+| 經濟型（全部 mini 模型） | $0.35 | 6.5/10 | 18.6 |
+| 平衡型（混合層級） | $0.85 | 7.8/10 | 9.2 |
+| 頂級型（全部旗艦模型） | $2.40 | 8.3/10 | 3.5 |
 
-The balanced configuration provides optimal cost-quality trade-off for most use cases.
-
----
-
-## 8. Limitations and Future Work
-
-### 8.1 Current Limitations
-
-1. **Language Support**: Current implementation optimized for English and Chinese manuscripts
-2. **Domain Coverage**: Specialized domains (e.g., advanced mathematics) may require domain-specific models
-3. **Citation Verification**: Metadata extraction dependent on source availability
-4. **Computational Resources**: Large dataset analysis constrained by memory limits
-5. **Model Dependence**: Quality tied to underlying LLM capabilities
-
-### 8.2 Planned Enhancements
-
-**Version 3.2 Roadmap**:
-- Multi-language support (Japanese, Korean, Spanish)
-- Advanced statistical modeling (time series, Bayesian inference)
-- Interactive data visualization dashboard
-- LaTeX output format for academic submissions
-- Integration with reference management systems (Zotero, Mendeley)
-
-**Version 4.0 Vision**:
-- Federated multi-institution research collaboration
-- Real-time literature monitoring and alert system
-- Automated hypothesis generation from data patterns
-- Integration with academic publishing platforms
-- Peer review simulation and manuscript improvement suggestions
+平衡型配置為多數使用案例提供最佳的成本品質權衡。
 
 ---
 
-## 9. Ethical Considerations
+## 8. 限制與未來研究
 
-### 9.1 Academic Integrity
+### 8.1 目前限制
 
-Veritas is designed as a research assistance tool, not a replacement for human scholarship. Users are responsible for:
+1. **語言支援**：目前實作針對英文與中文手稿最佳化
+2. **領域涵蓋**：專業領域（例：進階數學）可能需要領域特定模型
+3. **引用驗證**：元數據提取依賴來源可得性
+4. **計算資源**：大型資料集分析受記憶體限制約束
+5. **模型依賴**：品質繫結於底層 LLM 能力
 
-- Verifying accuracy of all generated content
-- Reviewing and validating cited sources
-- Adding original insights and interpretations
-- Disclosing AI assistance in manuscript acknowledgments
+### 8.2 規劃增強功能
 
-### 9.2 Data Privacy
+**版本 3.2 路線圖**：
+- 多語言支援（日文、韓文、西班牙文）
+- 進階統計建模（時間序列、貝氏推論）
+- 互動式數據視覺化儀表板
+- LaTeX 輸出格式供學術投稿
+- 與參考文獻管理系統整合（Zotero、Mendeley）
 
-All data processing occurs locally. User-uploaded datasets:
-- Are not transmitted to external servers beyond API calls
-- Are automatically deleted after session completion
-- Comply with institutional data governance policies
-
-### 9.3 API Usage Compliance
-
-Users must maintain their own API credentials and comply with:
-- OpenAI Terms of Service
-- Tavily API acceptable use policies
-- Applicable academic integrity guidelines
+**版本 4.0 願景**：
+- 跨機構研究協作聯盟
+- 即時文獻監控與警示系統
+- 從數據模式自動生成假設
+- 與學術出版平台整合
+- 同儕審查模擬與手稿改進建議
 
 ---
 
-## 10. Technical Documentation
+## 9. 倫理考量
 
-### 10.1 Module Structure
+### 9.1 學術誠信
+
+Veritas 設計為研究輔助工具，非人類學術研究的替代品。使用者負責：
+
+- 驗證所有生成內容的準確性
+- 審查與驗證引用來源
+- 添加原創見解與詮釋
+- 於手稿致謝中揭露 AI 輔助
+
+### 9.2 資料隱私
+
+所有數據處理於本地進行。使用者上傳的資料集：
+- 不傳輸至外部伺服器（API 呼叫除外）
+- 於會話完成後自動刪除
+- 遵循機構資料治理政策
+
+### 9.3 API 使用合規
+
+使用者必須維護自己的 API 憑證並遵守：
+- OpenAI 服務條款
+- Tavily API 可接受使用政策
+- 適用的學術誠信準則
+
+---
+
+## 10. 技術文件
+
+### 10.1 模組結構
 
 ```
 veritas-ai-researcher/
-├── agents.py                 # Agent definitions and configurations
-├── tasks.py                  # Task templates for each agent
-├── tools.py                  # Custom tools and integrations
-├── config.py                 # LLM configuration management
-├── api_server.py             # FastAPI web service
-├── workflows/                # LangGraph workflow definitions
+├── agents.py                 # 代理定義與配置
+├── tasks.py                  # 各代理的任務範本
+├── tools.py                  # 自訂工具與整合
+├── config.py                 # LLM 配置管理
+├── api_server.py             # FastAPI Web 服務
+├── workflows/                # LangGraph 工作流定義
 │   ├── simple_workflow.py
 │   ├── enhanced_workflow.py
 │   ├── domain_adaptive_workflow.py
 │   └── hybrid_workflow.py
-├── frontend/                 # React-based web interface
-├── results/                  # Research output directory
-├── uploads/                  # User data upload directory
-└── requirements.txt          # Python dependencies
+├── frontend/                 # React 基礎 Web 介面
+├── results/                  # 研究輸出目錄
+├── uploads/                  # 使用者資料上傳目錄
+└── requirements.txt          # Python 相依套件
 ```
 
-### 10.2 Configuration Options
+### 10.2 配置選項
 
-**LLM Model Selection**:
+**LLM 模型選擇**：
 ```python
 from config import LLMFactory
 
-# Create agent-optimized LLM
+# 建立代理最佳化的 LLM
 llm = LLMFactory.create_agent_llm("academic_writer")
 
-# Create budget-conscious LLM
+# 建立預算導向的 LLM
 llm = LLMFactory.create_budget_conscious_llm(
     "academic_writer",
     budget_tier="economy"
 )
 
-# Custom model override
+# 自訂模型覆寫
 llm = LLMFactory.create_llm(
     "gpt-4o",
     temperature=0.7,
@@ -503,27 +503,27 @@ llm = LLMFactory.create_llm(
 )
 ```
 
-**Workflow Configuration**:
+**工作流配置**：
 ```python
 from workflows.enhanced_workflow import create_enhanced_workflow
 
-# Create workflow with custom parameters
+# 以自訂參數建立工作流
 workflow = create_enhanced_workflow(
     max_revisions=3,
     quality_threshold=8,
     enable_version_control=True
 )
 
-# Execute research task
+# 執行研究任務
 result = workflow.run(
-    goal="Analyze impact of AI on healthcare delivery",
+    goal="分析 AI 對醫療服務提供的影響",
     data_file_path="data/healthcare_metrics.csv"
 )
 ```
 
-### 10.3 Extension and Customization
+### 10.3 擴充與自訂
 
-**Adding Custom Agents**:
+**新增自訂代理**：
 ```python
 from crewai import Agent
 from config import LLMFactory
@@ -531,264 +531,261 @@ from config import LLMFactory
 def custom_statistical_agent():
     llm = LLMFactory.create_llm("o3-mini")
     return Agent(
-        role="Statistical Consultant",
-        goal="Advanced statistical analysis and validation",
-        backstory="Expert statistician with 20 years experience...",
+        role="統計顧問",
+        goal="進階統計分析與驗證",
+        backstory="具 20 年經驗的專家統計學家...",
         llm=llm,
         tools=[custom_r_executor_tool],
         verbose=True
     )
 ```
 
-**Adding Custom Tools**:
+**新增自訂工具**：
 ```python
 from crewai.tools import BaseTool
 
 class CustomDatabaseTool(BaseTool):
     name: str = "DatabaseQuery"
-    description: str = "Execute SQL queries on research database"
+    description: str = "對研究資料庫執行 SQL 查詢"
 
     def _run(self, query: str) -> str:
-        # Implementation
+        # 實作
         return results
 ```
 
 ---
 
-## 11. Testing and Validation
+## 11. 測試與驗證
 
-### 11.1 Unit Tests
+### 11.1 單元測試
 
 ```bash
-# Run core functionality tests
+# 執行核心功能測試
 python -m pytest tests/
 
-# Run integration tests
+# 執行整合測試
 python -m pytest tests/integration/
 
-# Run performance benchmarks
+# 執行效能基準測試
 python -m pytest tests/performance/
 ```
 
-### 11.2 System Diagnostics
+### 11.2 系統診斷
 
 ```bash
-# Verify installation
+# 驗證安裝
 python quick_diagnostic.py
 
-# Test API connectivity
+# 測試 API 連線
 python test_system.py
 
-# Validate feedback system
+# 驗證回饋系統
 python test_feedback_system.py
 ```
 
 ---
 
-## 12. Contributing
+## 12. 貢獻
 
-We welcome contributions from the research community. Please follow these guidelines:
+我們歡迎研究社群的貢獻。請遵循以下準則：
 
-### 12.1 Development Setup
+### 12.1 開發設定
 
 ```bash
-# Fork repository
+# Fork 儲存庫
 git clone https://github.com/YOUR_USERNAME/veritas-ai-researcher.git
 cd veritas-ai-researcher
 
-# Create feature branch
+# 建立功能分支
 git checkout -b feature/your-feature-name
 
-# Install development dependencies
+# 安裝開發相依套件
 pip install -r requirements.txt
 pip install black isort pytest
 
-# Run code formatters
+# 執行程式碼格式化工具
 black .
 isort .
 
-# Run tests
+# 執行測試
 pytest tests/
 ```
 
-### 12.2 Code Standards
+### 12.2 程式碼標準
 
-- Follow PEP 8 style guidelines
-- Include type hints for all functions
-- Write docstrings in Google style format
-- Maintain test coverage above 80%
-- Document all public APIs
+- 遵循 PEP 8 風格指南
+- 為所有函式加入型別提示
+- 以 Google 風格撰寫文件字串
+- 維持測試涵蓋率 80% 以上
+- 文件化所有公開 API
 
-### 12.3 Pull Request Process
+### 12.3 Pull Request 流程
 
-1. Update documentation for any new features
-2. Add unit tests for new functionality
-3. Ensure all tests pass locally
-4. Submit PR with detailed description
-5. Respond to reviewer feedback
+1. 為任何新功能更新文件
+2. 為新功能添加單元測試
+3. 確保所有測試於本地通過
+4. 提交含詳細描述的 PR
+5. 回應審查者回饋
 
 ---
 
-## 13. License
+## 13. 授權
 
-This project is licensed under the MIT License. See LICENSE file for details.
+本專案採用 MIT 授權條款。詳見 LICENSE 檔案。
 
 ```
 MIT License
 
 Copyright (c) 2025 Veritas Research Platform
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+茲此授予任何取得本軟體及相關文件檔案（「本軟體」）複本之人士，
+不受限制地處理本軟體之權利，包括但不限於使用、複製、修改、
+合併、發布、散布、再授權及／或販售本軟體複本之權利，
+且准許獲提供本軟體之人士依下列條件享有上述權利：
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+上述著作權聲明及本許可聲明須包含於本軟體所有複本或
+重要部分中。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+本軟體係依「現況」提供，不附帶任何明示或暗示之保證，
+包括但不限於適售性、特定目的適用性及非侵權之保證。
+於任何情況下，著作人或著作權持有人對於因本軟體或
+本軟體之使用或其他處理所產生、引致或與其有關之
+任何索賠、損害或其他責任，無論其係因契約、侵權
+或其他原因產生，概不負責。
 ```
 
 ---
 
-## 14. Acknowledgments
+## 14. 致謝
 
-This research platform builds upon several open-source projects and commercial APIs:
+本研究平台建構於數個開源專案與商業 API 之上：
 
-- **CrewAI**: Multi-agent orchestration framework (https://crewai.com)
-- **LangChain**: LLM application development framework (https://langchain.com)
-- **OpenAI**: Large language model APIs (https://openai.com)
-- **Tavily**: Intelligent search API (https://tavily.com)
+- **CrewAI**：多代理協調框架（https://crewai.com）
+- **LangChain**：LLM 應用開發框架（https://langchain.com）
+- **OpenAI**：大型語言模型 API（https://openai.com）
+- **Tavily**：智能搜尋 API（https://tavily.com）
 
-We thank the open-source community for their contributions to the Python scientific computing ecosystem, including the developers of pandas, numpy, matplotlib, seaborn, and scikit-learn.
+我們感謝開源社群對 Python 科學計算生態系統的貢獻，包括 pandas、numpy、matplotlib、seaborn 與 scikit-learn 的開發者。
 
 ---
 
-## 15. Citation
+## 15. 引用
 
-If you use Veritas in your research, please cite:
+若您於研究中使用 Veritas，請引用：
 
 ```bibtex
 @software{veritas2025,
   author = {Veritas Research Platform Contributors},
-  title = {Veritas: A Multi-Agent Framework for Automated Academic Research},
+  title = {Veritas：基於多代理架構的自動化學術研究框架},
   year = {2025},
   version = {3.1.0},
   url = {https://github.com/jaywang172/veritas-ai-researcher},
-  note = {An autonomous research assistance system leveraging multi-agent LLM orchestration}
+  note = {運用多代理 LLM 協調的自主式研究輔助系統}
 }
 ```
 
 ---
 
-## 16. Contact and Support
+## 16. 聯絡與支援
 
-### 16.1 Issue Reporting
+### 16.1 問題回報
 
-For bug reports and feature requests, please use the GitHub issue tracker:
+針對錯誤回報與功能請求，請使用 GitHub 問題追蹤器：
 https://github.com/jaywang172/veritas-ai-researcher/issues
 
-### 16.2 Documentation
+### 16.2 文件
 
-Full documentation available at: [Documentation URL]
+完整文件請見：[文件 URL]
 
-### 16.3 Community
+### 16.3 社群
 
-- GitHub Discussions: For general questions and community support
-- Project Wiki: For tutorials and advanced usage guides
-
----
-
-## 17. Version History
-
-### Version 3.1.0 (Current)
-- Implemented automated review loop with quality scoring
-- Added comprehensive version control for all research artifacts
-- Introduced domain-adaptive workflow for specialized research areas
-- Enhanced citation formatting with metadata extraction
-- Optimized LLM configuration for cost-performance balance
-
-### Version 3.0.0
-- Complete architecture redesign with LangGraph integration
-- Eight-agent system with specialized roles
-- Web-based frontend interface
-- Real-time progress monitoring via WebSocket
-- Support for hybrid literature-data research
-
-### Version 2.x
-- Basic multi-agent implementation
-- Sequential workflow processing
-- Command-line interface only
+- GitHub 討論區：供一般問題與社群支援
+- 專案 Wiki：供教學與進階使用指南
 
 ---
 
-## Appendix A: Configuration Reference
+## 17. 版本歷史
 
-### A.1 Supported LLM Models
+### 版本 3.1.0（目前版本）
+- 實作具品質評分功能的自動化審閱循環
+- 新增所有研究產出物的全面版本控制
+- 引入針對專業研究領域的領域適應工作流
+- 增強具元數據提取功能的引文格式化
+- 最佳化 LLM 配置以平衡成本效能
 
-| Model | Context Window | Max Output | Use Case |
-|-------|---------------|------------|----------|
-| gpt-5 | 128K tokens | 16K tokens | Premium editing |
-| gpt-5-mini | 128K tokens | 16K tokens | Advanced writing |
-| gpt-4.1 | 128K tokens | 4K tokens | Reliable tool use |
-| gpt-4.1-mini | 128K tokens | 4K tokens | Balanced tasks |
-| gpt-4o | 128K tokens | 4K tokens | Multi-modal input |
-| gpt-4o-mini | 128K tokens | 4K tokens | Cost-effective search |
-| o3 | 200K tokens | 100K tokens | Complex reasoning |
-| o3-mini | 200K tokens | 64K tokens | Strategic planning |
+### 版本 3.0.0
+- 完整架構重新設計，整合 LangGraph
+- 具專業化角色的八代理系統
+- 網路基礎前端介面
+- 透過 WebSocket 的即時進度監控
+- 支援混合文獻-數據研究
 
-### A.2 API Rate Limits
-
-Default configurations respect API provider limits:
-- OpenAI: 10,000 requests/minute (tier 3)
-- Tavily: 1,000 searches/month (free tier)
-
-For production deployments, enterprise tier subscriptions recommended.
+### 版本 2.x
+- 基礎多代理實作
+- 循序工作流處理
+- 僅命令列介面
 
 ---
 
-## Appendix B: Troubleshooting
+## 附錄 A：配置參考
 
-### B.1 Common Issues
+### A.1 支援的 LLM 模型
 
-**Problem**: Module import errors
-**Solution**: Verify virtual environment activation and run `pip install -r requirements.txt`
+| 模型 | 脈絡視窗 | 最大輸出 | 使用案例 |
+|-----|---------|---------|---------|
+| gpt-5 | 128K 詞元 | 16K 詞元 | 頂級編輯 |
+| gpt-5-mini | 128K 詞元 | 16K 詞元 | 進階寫作 |
+| gpt-4.1 | 128K 詞元 | 4K 詞元 | 可靠的工具使用 |
+| gpt-4.1-mini | 128K 詞元 | 4K 詞元 | 平衡任務 |
+| gpt-4o | 128K 詞元 | 4K 詞元 | 多模態輸入 |
+| gpt-4o-mini | 128K 詞元 | 4K 詞元 | 成本效益搜尋 |
+| o3 | 200K 詞元 | 100K 詞元 | 複雜推理 |
+| o3-mini | 200K 詞元 | 64K 詞元 | 策略規劃 |
 
-**Problem**: API authentication failures
-**Solution**: Verify `.env` file contains valid credentials for all services
+### A.2 API 速率限制
 
-**Problem**: Out of memory during data analysis
-**Solution**: Reduce dataset size or increase system RAM allocation
+預設配置遵守 API 提供者限制：
+- OpenAI：10,000 請求/分鐘（第 3 層）
+- Tavily：1,000 搜尋/月（免費層）
 
-**Problem**: Slow workflow execution
-**Solution**: Check network latency to API endpoints, consider regional API endpoints
+針對正式環境部署，建議企業層訂閱。
 
-### B.2 Diagnostic Commands
+---
+
+## 附錄 B：疑難排解
+
+### B.1 常見問題
+
+**問題**：模組匯入錯誤
+**解決方案**：驗證虛擬環境已啟動並執行 `pip install -r requirements.txt`
+
+**問題**：API 認證失敗
+**解決方案**：驗證 `.env` 檔案包含所有服務的有效憑證
+
+**問題**：數據分析時記憶體不足
+**解決方案**：縮減資料集大小或增加系統 RAM 配置
+
+**問題**：工作流執行緩慢
+**解決方案**：檢查 API 端點的網路延遲，考慮區域性 API 端點
+
+### B.2 診斷指令
 
 ```bash
-# Check Python version
+# 檢查 Python 版本
 python --version
 
-# Verify dependencies
-python -c "import pandas, crewai, langgraph; print('All imports successful')"
+# 驗證相依套件
+python -c "import pandas, crewai, langgraph; print('所有匯入成功')"
 
-# Test API connectivity
+# 測試 API 連線
 python test_system.py
 
-# Check system resources
+# 檢查系統資源
 python quick_diagnostic.py
 ```
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2025-01-05
-**Maintenance**: This documentation is actively maintained and updated with each software release.
+**文件版本**：1.0
+**最後更新**：2025-01-05
+**維護說明**：本文件隨各軟體發行版本積極維護與更新。
