@@ -107,22 +107,174 @@ python -c "import pandas, statsmodels, crewai, langgraph; print(' 所有依賴�
 ##  系統架構
 
 ###  **核心架構圖**
+
 ```mermaid
 graph TB
-    A[用戶輸入] --> B[專案經理代理]
-    B --> C{研究類型判斷}
-    C -->|文獻型| D[文獻搜集代理]
-    C -->|數據型| E[計算科學家代理]
-    C -->|混合型| F[並行執行]
-    F --> D
-    F --> E
-    D --> G[研究分析師]
-    E --> G
-    G --> H[大綱規劃師]
-    H --> I[學術寫作專家]
-    I --> J[編輯審閱師]
-    J --> K[引文格式化師]
-    K --> L[最終報告]
+    subgraph "前端層 (Presentation Layer)"
+        A[React Web UI] --> B[WebSocket Client]
+        A --> C[File Upload]
+        A --> D[Real-time Progress Display]
+    end
+
+    subgraph "API層 (API Layer)"
+        E[FastAPI Server] --> F[WebSocket Manager]
+        E --> G[CORS Middleware]
+        E --> H[Request Handler]
+    end
+
+    subgraph "工作流程引擎 (Workflow Engine)"
+        I[Simple Workflow]
+        J[Enhanced Workflow]
+        K[Domain Adaptive Workflow]
+        L[Hybrid Workflow]
+        M[LangGraph State Manager]
+    end
+
+    subgraph "智能審稿迴圈系統 (Review Loop System) ⭐ v3.1"
+        N[評分系統 1-10分]
+        O[決策引擎 ACCEPT/REVISE/REJECT]
+        P[修訂優先級 HIGH/MEDIUM/LOW]
+        Q[多輪審核機制]
+    end
+
+    subgraph "版本控制系統 (Version Control) ⭐ v3.1"
+        R[自動版本追蹤]
+        S[變更記錄與時間戳]
+        T[版本比較與恢復]
+    end
+
+    subgraph "AI代理團隊 (AI Agent Team)"
+        U[專案經理 - o3]
+        V[文獻搜集專家 - gpt-4o-mini]
+        W[計算科學家 - gpt-4o]
+        X[研究分析師 - gpt-4.1-mini]
+        Y[大綱規劃師 - o3-mini]
+        Z[學術寫作專家 - gpt-5-mini]
+        AA[編輯審閱師 - gpt-5]
+        AB[引文格式化師]
+    end
+
+    subgraph "工具層 (Tools Layer)"
+        AC[Tavily Search API]
+        AD[Code Interpreter]
+        AE[File Read/Write]
+        AF[Data Analysis Tools]
+        AG[Pandas/Matplotlib/Seaborn]
+    end
+
+    subgraph "配置層 (Configuration Layer)"
+        AH[Multi-Model LLM Config]
+        AI[Cost Optimization]
+        AJ[API Key Management]
+    end
+
+    subgraph "數據層 (Data Layer)"
+        AK[uploads/ - 用戶上傳]
+        AL[results/ - 研究成果]
+        AM[Session Management]
+    end
+
+    %% 主要流程連接
+    A --> E
+    B <--> F
+    C --> H
+    D <--> F
+
+    H --> I
+    H --> J
+    H --> K
+    H --> L
+
+    J --> N
+    N --> O
+    O --> P
+    P --> Q
+    Q --> R
+    R --> S
+    S --> T
+
+    I --> U
+    J --> U
+    K --> U
+    L --> U
+
+    U --> V
+    U --> W
+    U --> X
+    U --> Y
+    U --> Z
+    U --> AA
+    U --> AB
+
+    V --> AC
+    W --> AD
+    W --> AE
+    W --> AF
+    W --> AG
+
+    AH --> U
+    AI --> AH
+    AJ --> AH
+
+    H --> AK
+    T --> AL
+    F --> AM
+
+    style N fill:#90EE90
+    style O fill:#90EE90
+    style P fill:#90EE90
+    style Q fill:#90EE90
+    style R fill:#FFD700
+    style S fill:#FFD700
+    style T fill:#FFD700
+```
+
+###  **工作流程詳細圖**
+
+```mermaid
+graph LR
+    subgraph "Phase 1: 研究與數據收集"
+        A1[用戶輸入研究目標] --> B1{專案經理判斷}
+        B1 -->|文獻型| C1[文獻搜集代理]
+        B1 -->|數據型| D1[計算科學家代理]
+        B1 -->|混合型| E1[並行執行]
+        E1 --> C1
+        E1 --> D1
+    end
+
+    subgraph "Phase 2: 分析與規劃"
+        C1 --> F1[研究分析師提取論點]
+        D1 --> F1
+        F1 --> G1[大綱規劃師設計結構]
+    end
+
+    subgraph "Phase 3: 寫作與審稿迴圈 ⭐"
+        G1 --> H1[學術寫作專家撰寫初稿]
+        H1 --> I1[版本1保存]
+        I1 --> J1[審稿迴圈 Round 1]
+        J1 --> K1{評分 >= 7?}
+        K1 -->|否| L1[執行修訂]
+        L1 --> M1[版本2保存]
+        M1 --> N1[審稿迴圈 Round 2]
+        N1 --> O1{評分 >= 7?}
+        O1 -->|否| P1[最終修訂]
+        K1 -->|是| Q1[編輯審閱師]
+        O1 -->|是| Q1
+        P1 --> R1[版本3保存]
+        R1 --> Q1
+    end
+
+    subgraph "Phase 4: 最終輸出"
+        Q1 --> S1[引文格式化師]
+        S1 --> T1[最終報告輸出]
+        T1 --> U1[自動保存到 results/]
+    end
+
+    style J1 fill:#90EE90
+    style N1 fill:#90EE90
+    style I1 fill:#FFD700
+    style M1 fill:#FFD700
+    style R1 fill:#FFD700
 ```
 
 ###  模組化設計
